@@ -20,9 +20,9 @@ const pages = [
   { name: 'Fornecedores', path: '/fornecedores' },
   { name: 'Produtos', path: '/produtos' },
 ];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [ 'Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar({setLogar}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -40,6 +40,10 @@ function ResponsiveAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+function logout(){
+  setLogar("");
+}
 
   return (
     <AppBar position="static">
@@ -162,7 +166,7 @@ function ResponsiveAppBar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography textAlign="center" onClick={logout}>{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>

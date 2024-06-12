@@ -1,9 +1,8 @@
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { Suspense, lazy, useState } from 'react'
-import './App.css'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Suspense, lazy, useState } from 'react';
+import './App.css';
 import { Loading, Navbar } from "./Components";
 import Login from "./Pages/Login";
-
 
 const Home = lazy(() => import('./Pages/Home'));
 const CotacoesForm = lazy(() => import('./Pages/Cotacoes/form'));
@@ -15,27 +14,38 @@ const ProdutoList = lazy(() => import('./Pages/Produtos/list'));
 const Registro = lazy(() => import('./Pages/Registro'));
 
 function App() {
-
+  const [logar, setLogar] = useState("");
+  
+  function logout() {
+    setLogar("");
+  }
 
   return (
     <Router>
-      <Suspense fallback={<Loading/>}>
-      <Navbar/>
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/cotacoes" element={<CotacoesList/>} />
-        <Route path="/cotacoes/form" element={<CotacoesForm/>} />
-        <Route path="/fornecedores" element={<FornecedorList/>} />
-        <Route path="/fornecedores/form" element={<FornecedorForm/>} />
-        <Route path="/produtos" element={<ProdutoList/>} />
-        <Route path="/produtos/form" element={<ProdutoForm/>} />
-        <Route path="*" element={<h1>Not Found</h1>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Registro/>} />
-      </Routes>
+      <Suspense fallback={<Loading />}>
+        {logar === "" ? (
+          <Login setLogar={setLogar} />
+        ) : (
+          <>
+            <Navbar setLogar={logout} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/cotacoes" element={<CotacoesList />} />
+              <Route path="/cotacoes/form" element={<CotacoesForm />} />
+              <Route path="/fornecedores" element={<FornecedorList />} />
+              <Route path="/fornecedores/form" element={<FornecedorForm />} />
+              <Route path="/produtos" element={<ProdutoList />} />
+              <Route path="/produtos/form" element={<ProdutoForm />} />
+              <Route path="*" element={<h1>Not Found</h1>} />
+              <Route path="/login" element={<Login setLogar={setLogar} />} />
+              <Route path="/register" element={<Registro />} />
+            </Routes>
+          </>
+        )}
       </Suspense>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
+

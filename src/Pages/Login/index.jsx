@@ -1,11 +1,14 @@
-import { Grid, Box, TextField, Button } from "../../Components";
+import { Grid, Box, TextField, Button, Typography } from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Login() {
+export default function Login({setLogar}) {
+  function login(){
+    setLogar("usuario@usuario.com");
+  }
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => {
@@ -46,7 +49,7 @@ export default function Login() {
         }}
       >
         <Box mb={2}>
-          <h1>Login</h1>
+          <Typography variant="h4">Login</Typography>
         </Box>
         <Box sx={{ width: "80%", mb: 2 }}>
           <TextField label="Email" fullWidth={true} />
@@ -67,10 +70,31 @@ export default function Login() {
             }}
           />
         </Box>
-        <Link to="/register" mb={2}>
-          Cadastrar-se
-        </Link>
-        <Button>Entrar</Button>
+        <Grid
+          container={true}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "80%",
+          }}
+        >
+          <Grid item={true}>
+            <Button
+              variant="contained"
+              fullWidth={true}
+              component={Link}
+              to={"/register"}
+            >
+              cadastre-se
+            </Button>
+          </Grid>
+          <Grid item={true}>
+            <Button variant="contained" fullWidth={true} onClick={login}>
+              Entrar
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );
