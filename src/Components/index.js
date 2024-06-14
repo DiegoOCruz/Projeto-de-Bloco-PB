@@ -5,3 +5,7 @@ export {default as Navbar} from './Navbar';
 export {default as TextField} from './TextField';
 export {default as Box} from './Box';
 export {default as Typography} from './Typography';
+export {default as Select} from './Select';
+export {default as InputLabel} from './InputLabel';
+export {default as MenuItem} from './MenuItem';
+export {default as FormControl} from './FormControl';

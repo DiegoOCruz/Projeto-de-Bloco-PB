@@ -18,6 +18,7 @@ const pages = [
   { name: 'Home', path: '/' },
   { name: 'Cotações', path: '/cotacoes' },
   { name: 'Fornecedores', path: '/fornecedores' },
+  { name: 'Contatos', path: '/contato' },
   { name: 'Produtos', path: '/produtos' },
 ];
 const settings = [ 'Logout'];
@@ -143,7 +144,7 @@ function logout(){
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Logout">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL3Hl5FXWpEFo9p7GTrCTz2jKeSpMPXQJ7JQ&s" />
               </IconButton>

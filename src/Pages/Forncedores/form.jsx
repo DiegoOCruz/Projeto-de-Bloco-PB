@@ -129,13 +129,13 @@ export default function FornecedorForm() {
               sx={{
                 width: "100%",
                 display: "flex",
-                justifyContent: "start",
+                justifyContent: "center",
               }}
             >
               <TextfieldComponent
                 label="CEP - (apenas números)"
                 sx={{
-                  width: "49%",
+                  width: "50%",
                 }}
                 onChange={handleChange}
               />
