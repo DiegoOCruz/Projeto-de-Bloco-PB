@@ -1,27 +1,10 @@
 import { Link } from "react-router-dom";
 import { Box, Grid, Button, Typography } from "../../Components";
-import { faker } from '@faker-js/faker';
-import { useEffect, useState } from "react";
 
 
 
 export default function FornecedorList() {
-  const [fornecedores, setFornecedores] = useState([]);
-
-  useEffect(() => {
-    const novoFornecedor = [];
-    for (let i = 0; i < 10; i++) {
-      novoFornecedor.push({
-        id: faker.string.uuid(),
-        razaoSocial: faker.company.name(),
-        cnpj: faker.internet.ip(),
-        email: faker.internet.email(),
-        telefone: faker.phone.number(),
-        endereco: faker.location.street(),
-      });
-    }
-    setFornecedores(novoFornecedor);
-  }, []);
+  
 
   return (
     <Grid
