@@ -13,6 +13,7 @@ import TextfieldComponent from "../../Components/TextField";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createSvgIcon } from "@mui/material/utils";
+import InputAdornment from '@mui/material/InputAdornment';
 
 const PlusIcon = createSvgIcon(
   <svg
@@ -32,6 +33,7 @@ const PlusIcon = createSvgIcon(
 );
 
 export default function CotacoesForm() {
+
   const [fields, setFields] = useState([
     { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" }
   ]);
@@ -39,6 +41,13 @@ export default function CotacoesForm() {
   const handleChange = (index, field, value) => {
     const newFields = fields.slice();
     newFields[index][field] = value;
+
+    if (field === "quantidade" || field === "preco") {
+      const quantidade = parseFloat(newFields[index].quantidade) || 0;
+      const preco = parseFloat(newFields[index].preco) || 0;
+      newFields[index].total = (quantidade * preco).toFixed(2);
+    }
+
     setFields(newFields);
   };
 
@@ -50,9 +59,13 @@ export default function CotacoesForm() {
   };
 
   const handleRemoveFields = (index) => {
-    const newFields = fields.slice();
-    newFields.splice(index, 1);
-    setFields(newFields);
+    if(fields.length <= 1) {
+      return;
+    }else{
+      const newFields = fields.slice();
+      newFields.splice(index, 1);
+      setFields(newFields);
+    }
   };
 
   return (
@@ -111,7 +124,7 @@ export default function CotacoesForm() {
                   label="Produto"
                   onChange={(e) => handleChange(index, "produto", e.target.value)}
                 >
-                  <MenuItem value="Produto 1">Produto 1</MenuItem>
+                  <MenuItem value={field.produto}>{field.produto}</MenuItem>
                   
                 </Select>
               </FormControl>
@@ -126,13 +139,14 @@ export default function CotacoesForm() {
                   label="Fornecedor"
                   onChange={(e) => handleChange(index, "fornecedor", e.target.value)}
                 >
-                  <MenuItem value="Fornecedor 1">Fornecedor 1</MenuItem>
+                  <MenuItem value={field.fornecedor}>{field.fornecedor}</MenuItem>
                   
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={2}>
               <TextfieldComponent
+                type="number"
                 label="Quantidade"
                 value={field.quantidade}
                 onChange={(e) => handleChange(index, "quantidade", e.target.value)}
@@ -141,7 +155,11 @@ export default function CotacoesForm() {
             </Grid>
             <Grid item xs={2}>
               <TextfieldComponent
+                type="number"
                 label="Preço"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                }}
                 value={field.preco}
                 onChange={(e) => handleChange(index, "preco", e.target.value)}
                 fullWidth
@@ -149,7 +167,12 @@ export default function CotacoesForm() {
             </Grid>
             <Grid item xs={2}>
               <TextfieldComponent
+                type="number"
                 label="Total"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  readOnly: true,
+                }}
                 value={field.total}
                 onChange={(e) => handleChange(index, "total", e.target.value)}
                 fullWidth
@@ -183,4 +206,5 @@ export default function CotacoesForm() {
     </Grid>
   );
 }
+
 
