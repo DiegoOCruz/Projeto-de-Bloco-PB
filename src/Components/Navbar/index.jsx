@@ -20,6 +20,7 @@ const pages = [
   { name: 'Fornecedores', path: '/fornecedores' },
   { name: 'Contatos', path: '/contato' },
   { name: 'Produtos', path: '/produtos' },
+  { name: 'Adicionar Usuários', path: '/register' },
 ];
 const settings = [ 'Logout'];
 

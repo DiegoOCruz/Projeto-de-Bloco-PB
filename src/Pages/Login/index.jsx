@@ -4,17 +4,43 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../Services/firebaseConfig";
 
-export default function Login({setLogar}) {
-  function login(){
-    setLogar("usuario@usuario.com");
-  }
+export default function Login({ setLogar }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
 
+  function login() {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        setLogar(user.email);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+  }
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      login();
+    }
+  };
   return (
     <Grid container={true} xs={12}>
       <Grid
@@ -52,7 +78,7 @@ export default function Login({setLogar}) {
           <Typography variant="h4">Login</Typography>
         </Box>
         <Box sx={{ width: "80%", mb: 2 }}>
-          <TextField label="Email" fullWidth={true} />
+          <TextField label="Email" fullWidth={true} onChange={handleEmail} />
         </Box>
         <Box sx={{ width: "80%", mb: 2 }}>
           <TextField
@@ -68,6 +94,8 @@ export default function Login({setLogar}) {
                 </InputAdornment>
               ),
             }}
+            onChange={handlePassword}
+            onKeyDown={handleKeyDown}
           />
         </Box>
         <Grid
@@ -75,22 +103,17 @@ export default function Login({setLogar}) {
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
-            width: "80%",
+            justifyContent: "center",
+            width: "100%",
           }}
         >
-          <Grid item={true}>
-            <Button
-              variant="contained"
-              fullWidth={true}
-              component={Link}
-              to={"/register"}
-            >
-              cadastre-se
-            </Button>
-          </Grid>
-          <Grid item={true}>
-            <Button variant="contained" fullWidth={true} onClick={login}>
+          <Grid
+            item={true}
+            sx={{
+              width: "30%",
+            }}
+          >
+            <Button variant="contained" fullWidth onClick={login}>
               Entrar
             </Button>
           </Grid>

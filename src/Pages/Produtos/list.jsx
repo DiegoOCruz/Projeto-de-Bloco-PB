@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { getProducts } from "./Product";
 import { 
   Box, 
   Grid, 
@@ -30,18 +31,19 @@ export default function ProdutosList() {
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
 
-  const db = () => {
-    const tempRows = [];
-    for (let i = 0; i < 100; i++) {
-      const newRow = {
-        id: i,
-        nome: faker.commerce.product(),
-        descricao: faker.commerce.productDescription(),
-        ncm: faker.datatype.uuid(),
-      };
-      tempRows.push(newRow);
-    }
-    setRows(tempRows);
+ 
+  const db = async () => {
+    const products = await getProducts();
+    const list = [];
+    products.forEach((product) => {
+      list.push({
+        id: product.id,
+        nome: product.nome,
+        descricao: product.descricao,
+        ncm: product.ncm,
+      });
+    });
+    setRows(list);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -162,6 +164,14 @@ export default function ProdutosList() {
                       />
                     </TableCell>
                     <TableCell
+                      
+                      sx={{
+                        fontWeight: "bold",
+                      }}
+                    >
+                      ID
+                    </TableCell>
+                    <TableCell
                       sx={{
                         fontWeight: "bold",
                       }}
@@ -203,7 +213,14 @@ export default function ProdutosList() {
                           <TableCell padding="checkbox">
                             <Checkbox checked={isItemSelected} />
                           </TableCell>
-                          <TableCell component="th" scope="row">
+                          <TableCell 
+                          component="th" 
+                          scope="row"
+                          align="left"
+                          >
+                            {row.id}
+                          </TableCell>
+                          <TableCell>
                             {row.nome}
                           </TableCell>
                           <TableCell align="left">{row.descricao}</TableCell>

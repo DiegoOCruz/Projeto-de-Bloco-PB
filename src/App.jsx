@@ -18,10 +18,6 @@ const Registro = lazy(() => import('./Pages/Registro'));
 function App() {
   const [logar, setLogar] = useState("");
   
-  function logout() {
-    setLogar("");
-  }
-
   return (
     <Router>
       <Suspense fallback={<Loading />}>
@@ -29,7 +25,7 @@ function App() {
           <Login setLogar={setLogar} />
         ) : (
           <>
-            <Navbar setLogar={logout} />
+            <Navbar setLogar={setLogar} />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/cotacoes" element={<CotacoesList />} />
