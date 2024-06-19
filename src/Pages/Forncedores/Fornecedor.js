@@ -1,18 +1,18 @@
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc  } from "firebase/firestore"; 
 import { db } from "../../Services/firebaseConfig";
 
-export async function addProduct(novoProduto) {
+export async function addFornecedor(novoFornecedor) {
     try {
-        const docRef = await addDoc(collection(db, "produtos"), novoProduto);
+        const docRef = await addDoc(collection(db, "fornecedor"), novoFornecedor);
         console.log("Document written with ID: ", docRef.id);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
 }
 
-export async function getProducts() {
+export async function getFornecedor() {
     try {
-        const querySnapshot = await getDocs(collection(db, "produtos"));
+        const querySnapshot = await getDocs(collection(db, "fornecedor"));
         const products = [];
         querySnapshot.forEach((doc) => {
             products.push({ id: doc.id, ...doc.data() });
@@ -23,23 +23,23 @@ export async function getProducts() {
     }
 }
 
-export async function updateProducts(updatedProduct) {
+export async function updateFornecedor(updatedFornecedor) {
     try {
-        const docRef = doc(db, "produtos", updatedProduct.id);
+        const docRef = doc(db, "fornecedor", updatedFornecedor.id);
         await updateDoc(docRef, {
-            nome: updatedProduct.nome,
-            descricao: updatedProduct.descricao,
-            ncm: updatedProduct.ncm
+            nome: updatedFornecedor.nome,
+            descricao: updatedFornecedor.descricao,
+            ncm: updatedFornecedor.ncm
         });
-        console.log("Document updated with ID: ", updatedProduct.id);
+        console.log("Document updated with ID: ", updatedFornecedor.id);
     } catch (e) {
         console.error("Error updating document: ", e);
     }
 }
 
-export async function deleteProduct(id) {
+export async function deleteFornecedor(id) {
     try {
-        await deleteDoc(doc(db, "produtos", id));
+        await deleteDoc(doc(db, "fornecedor", id));
         console.log("Document deleted with ID: ", id);
     } catch (e) {
         console.error("Error deleting document: ", e);

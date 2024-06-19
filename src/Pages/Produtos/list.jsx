@@ -1,10 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getProducts } from "./Product";
-import { 
-  Box, 
-  Grid, 
-  Button, 
-  Typography, 
+import { deleteProduct, getProducts, updateProducts } from "./Product";
+import {
+  Box,
+  Grid,
+  Button,
+  Typography,
   Table,
   TableBody,
   TableCell,
@@ -15,34 +16,34 @@ import {
   Paper,
   Checkbox,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "../../Components";
 
-import { 
-  useEffect, 
-  useState,   
-} from "react";
+import { DeleteIcon, EditIcon } from "../../Components/Icons";
 
-import { faker } from "@faker-js/faker";
+
 
 export default function ProdutosList() {
+  const [open, setOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
+  const [searchQuery, setSearchQuery] = useState("");
 
- 
   const db = async () => {
     const products = await getProducts();
-    const list = [];
-    products.forEach((product) => {
-      list.push({
-        id: product.id,
-        nome: product.nome,
-        descricao: product.descricao,
-        ncm: product.ncm,
-      });
-    });
+    const list = products.map((product) => ({
+      id: product.id,
+      nome: product.nome,
+      descricao: product.descricao,
+      ncm: product.ncm,
+    }));
     setRows(list);
   };
 
@@ -86,11 +87,40 @@ export default function ProdutosList() {
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const handleSearchChange = (event) => { // Função para atualizar a consulta de busca
+  const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  // Filtrar rows com base na consulta de busca
+  const handleClickOpen = (product) => {
+    setSelectedProduct(product);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries(formData.entries());
+    const updatedProduct = {
+      id: formJson.id,
+      nome: formJson.nome,
+      descricao: formJson.descricao,
+      ncm: formJson.ncm,
+    };
+    await updateProducts(updatedProduct);
+    handleClose();
+    db(); //Atualiza a lista de produtos após a edição
+  };
+
+  const handleDelete = async (id) => {
+    await deleteProduct(id);
+    db(); //Atualiza a lista de produtos após a exclusão
+  };
+
   const filteredRows = rows.filter(
     (row) =>
       row.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,24 +148,26 @@ export default function ProdutosList() {
       <Typography variant="h3">Lista de Produtos</Typography>
 
       <Grid item={true} xs={12}>
-        <Grid container xs={12} sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "20px",
-          with: "80%",
-        
-        }}>
-
-      <TextField        
-        label="Buscar Produto"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        sx={{  
-          width: "80%"
-        }}
-      />
+        <Grid
+          container
+          xs={12}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "20px",
+            with: "80%",
+          }}
+        >
+          <TextField
+            label="Buscar Produto"
+            variant="outlined"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{
+              width: "80%",
+            }}
+          />
         </Grid>
         <Grid
           container
@@ -159,12 +191,13 @@ export default function ProdutosList() {
                         indeterminate={
                           selected.length > 0 && selected.length < rows.length
                         }
-                        checked={rows.length > 0 && selected.length === rows.length}
+                        checked={
+                          rows.length > 0 && selected.length === rows.length
+                        }
                         onChange={handleSelectAllClick}
                       />
                     </TableCell>
                     <TableCell
-                      
                       sx={{
                         fontWeight: "bold",
                       }}
@@ -179,7 +212,7 @@ export default function ProdutosList() {
                       PRODUTO
                     </TableCell>
                     <TableCell
-                      align="center"
+                      align="left"
                       sx={{
                         fontWeight: "bold",
                       }}
@@ -194,6 +227,20 @@ export default function ProdutosList() {
                     >
                       NCM
                     </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        fontWeight: "bold",
+                        width: "5px",
+                      }}
+                    ></TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        fontWeight: "bold",
+                        width: "5px",
+                      }}
+                    ></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -213,18 +260,95 @@ export default function ProdutosList() {
                           <TableCell padding="checkbox">
                             <Checkbox checked={isItemSelected} />
                           </TableCell>
-                          <TableCell 
-                          component="th" 
-                          scope="row"
-                          align="left"
-                          >
+                          <TableCell component="th" scope="row" align="left">
                             {row.id}
                           </TableCell>
-                          <TableCell>
-                            {row.nome}
-                          </TableCell>
+                          <TableCell>{row.nome}</TableCell>
                           <TableCell align="left">{row.descricao}</TableCell>
                           <TableCell align="center">{row.ncm}</TableCell>
+                          <TableCell>
+                            <Button onClick={() => handleClickOpen(row)}>
+                              <EditIcon />
+                            </Button>
+                          </TableCell>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{
+                              component: "form",
+                              onSubmit: handleEditSubmit,
+                            }}
+                          >
+                            <DialogTitle>Editar</DialogTitle>
+                            <DialogContent>
+                              <DialogContentText>
+                                Altere os campos abaixo para editar seu
+                                conteúdo.
+                              </DialogContentText>
+                              {selectedProduct && (
+                                <>
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="id"
+                                    name="id"
+                                    label="ID"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    InputProps={{
+                                      readOnly: true,
+                                    }}
+                                    defaultValue={selectedProduct.id}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="nome"
+                                    name="nome"
+                                    label="Nome"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedProduct.nome}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="descricao"
+                                    name="descricao"
+                                    label="Descrição"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedProduct.descricao}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="ncm"
+                                    name="ncm"
+                                    label="NCM"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedProduct.ncm}
+                                  />
+                                </>
+                              )}
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose}>Cancelar</Button>
+                              <Button type="submit">Salvar</Button>
+                            </DialogActions>
+                          </Dialog>
+
+                          <TableCell>
+                            <Button onClick={() => handleDelete(row.id)}>
+                              <DeleteIcon />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })}
@@ -234,7 +358,7 @@ export default function ProdutosList() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={filteredRows.length} // Atualizar a contagem com base nas linhas filtradas
+              count={filteredRows.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -267,4 +391,3 @@ export default function ProdutosList() {
     </Grid>
   );
 }
-

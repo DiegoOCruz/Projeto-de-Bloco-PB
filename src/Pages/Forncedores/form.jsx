@@ -3,10 +3,21 @@ import { Grid, Box, Button, Typography } from "../../Components";
 import TextfieldComponent from "../../Components/TextField";
 import BuscaEndereco from "../../Infra/BuscaEndereco";
 import { useState } from "react";
+import { addFornecedor } from "./Fornecedor";
 
 export default function FornecedorForm() {
   let cep = "";
   const [endereco, setEndereco] = useState({});
+  const [razaoSocial, setRazaoSocial] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cepp, setCepp] = useState("");
 
   async function handleChange(e) {
     if (e.target.value.length == 8) {
@@ -14,8 +25,68 @@ export default function FornecedorForm() {
       let retorno = await BuscaEndereco({ cep });
       //console.log(retorno);
       setEndereco(retorno);
+      if (retorno) {
+        setCepp(cep);
+        setLogradouro(retorno.logradouro);
+        setBairro(retorno.bairro);
+        setCidade(retorno.localidade);
+        setEstado(retorno.uf);
+      }
     }
   }
+  const handleRazaoSocial = (e) => {
+    setRazaoSocial(e.target.value);
+  };
+  const handleCnpj = (e) => {
+    setCnpj(e.target.value);
+  };
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
+  const handleTelefone = (e) => {
+    setTelefone(e.target.value);
+  };
+  const handleNumero = (e) => {
+    setNumero(e.target.value);
+  };
+
+  const handleCadastro = async () => {
+    if (
+      !razaoSocial ||
+      !cnpj ||
+      !email ||
+      !telefone ||
+      !logradouro ||
+      !numero ||
+      !bairro ||
+      !cidade ||
+      !estado
+    ) {
+      alert("TODOS OS CAMPOS DEVEM SER PREENCHIDOS.");
+      return;
+    }
+
+    const novoFornecedor = {
+      razaoSocial: razaoSocial,
+      cnpj: cnpj,
+      email: email,
+      telefone: telefone,
+      logradouro: logradouro,
+      numero: numero,
+      bairro: bairro,
+      cidade: cidade,
+      estado: estado,
+    };
+    await addFornecedor(novoFornecedor);
+
+    // Limpar os campos de texto após o envio
+    setRazaoSocial("");
+    setCnpj("");
+    setEmail("");
+    setTelefone("");
+    setEndereco("");
+    setCepp("");
+  };
 
   return (
     <Grid
@@ -56,8 +127,6 @@ export default function FornecedorForm() {
           spacing={2}
           sx={{
             padding: "10px",
-            
-
           }}
         >
           <Grid item={true} xs={12} sm={6}>
@@ -70,9 +139,11 @@ export default function FornecedorForm() {
             >
               <TextfieldComponent
                 label="Razão Social"
+                onChange={handleRazaoSocial}
                 sx={{
                   width: "100%",
                 }}
+                value={razaoSocial}
               />
             </Box>
           </Grid>
@@ -86,9 +157,11 @@ export default function FornecedorForm() {
             >
               <TextfieldComponent
                 label="CNPJ"
+                onChange={handleCnpj}
                 sx={{
                   width: "100%",
                 }}
+                value={cnpj}
               />
             </Box>
           </Grid>
@@ -102,9 +175,11 @@ export default function FornecedorForm() {
             >
               <TextfieldComponent
                 label="E-mail"
+                onChange={handleEmail}
                 sx={{
                   width: "100%",
                 }}
+                value={email}
               />
             </Box>
           </Grid>
@@ -118,9 +193,11 @@ export default function FornecedorForm() {
             >
               <TextfieldComponent
                 label="Telefone"
+                onChange={handleTelefone}
                 sx={{
                   width: "100%",
                 }}
+                value={telefone}
               />
             </Box>
           </Grid>
@@ -138,6 +215,7 @@ export default function FornecedorForm() {
                   width: "50%",
                 }}
                 onChange={handleChange}
+                
               />
             </Box>
           </Grid>
@@ -180,6 +258,7 @@ export default function FornecedorForm() {
                   >
                     <TextfieldComponent
                       label="Número"
+                      onChange={handleNumero}
                       sx={{
                         width: "100%",
                       }}
@@ -241,10 +320,14 @@ export default function FornecedorForm() {
               </Grid>
             )}
           </Grid>
-          <Grid container={true} xs={12} sm={12}
-          sx={{
-            gap: "10px",
-          }}>
+          <Grid
+            container={true}
+            xs={12}
+            sm={12}
+            sx={{
+              gap: "10px",
+            }}
+          >
             <Box
               sx={{
                 width: "100%",
@@ -252,7 +335,7 @@ export default function FornecedorForm() {
                 justifyContent: "center",
               }}
             >
-              <Button variant="contained">Cadastrar</Button>
+              <Button variant="contained" onClick={handleCadastro}>Cadastrar</Button>
             </Box>
           </Grid>
         </Grid>

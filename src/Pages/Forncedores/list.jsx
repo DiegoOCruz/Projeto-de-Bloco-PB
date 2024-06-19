@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { 
-  Box, 
-  Grid, 
-  Button, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Button,
+  Typography,
   Table,
   TableBody,
   TableCell,
@@ -14,14 +14,23 @@ import {
   Paper,
   Checkbox,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "../../Components";
+
+import { DeleteIcon, EditIcon } from "../../Components/Icons";
 
 import { 
   useEffect, 
   useState,   
 } from "react";
 
-import { faker } from "@faker-js/faker";
+import { getFornecedor } from "./Fornecedor";
+
+//TODO: Implementar a função de Ediçao/exclusão de fornecedor
 
 export default function FornecedorList() {
   const [rows, setRows] = useState([]);
@@ -30,19 +39,17 @@ export default function FornecedorList() {
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
 
-  const db = () => {
-    const tempRows = [];
-    for (let i = 0; i < 100; i++) {
-      const newRow = {
-        id: i,
-        nome: faker.company.name(),
-        email: faker.internet.email(),
-        telefone: faker.phone.number(),
-        endereco: faker.location.streetAddress({ useFullAddress: true }),
-      };
-      tempRows.push(newRow);
-    }
-    setRows(tempRows);
+  const db = async () => {
+    
+    const newRow = await getFornecedor(); // Obter dados do fornecedor
+    const list = newRow.map((row) => ({
+      id: row.id,
+      nome: row.razaoSocial,
+      email: row.email,
+      telefone: row.telefone,
+      endereco: row.cidade,
+    }));
+    setRows(list); // Atualizar o estado 'rows' com os dados mapeados
   };
 
   const handleChangePage = (event, newPage) => {
@@ -192,7 +199,13 @@ export default function FornecedorList() {
                         fontWeight: "bold",
                       }}
                     >
-                      ENDEREÇO
+                      CIDADE
+                    </TableCell>
+                    <TableCell>                
+                                      
+                    </TableCell>
+                    <TableCell>
+                       
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -219,6 +232,17 @@ export default function FornecedorList() {
                           <TableCell align="left">{row.email}</TableCell>
                           <TableCell align="center">{row.telefone}</TableCell>
                           <TableCell align="center">{row.endereco}</TableCell>
+                          <TableCell sx={{
+                            width: "10px"
+                          }}>
+                            <Button><EditIcon/></Button>
+                          </TableCell>
+
+                          <TableCell sx={{
+                            width: "10px"
+                          }}>
+                            <Button><DeleteIcon/></Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })}

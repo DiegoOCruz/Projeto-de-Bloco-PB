@@ -21,6 +21,12 @@ export {default as Paper} from './Paper';
 export {default as Container} from './Container';
 export {default as List} from './List';
 export {default as ListItem} from './ListItem';
+export {default as Dialog } from './Dialog';
+export {default as DialogTitle } from './DialogTitle';
+export {default as DialogContent } from './DialogContent';
+export {default as DialogActions } from './DialogActions';
+export {default as DialogContentText} from './DialogContentText'
+
 
 
 
