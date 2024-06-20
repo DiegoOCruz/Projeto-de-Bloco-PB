@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { 
-  Box, 
-  Grid, 
-  Button, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Button,
+  Typography,
   Table,
   TableBody,
   TableCell,
@@ -14,14 +14,22 @@ import {
   Paper,
   Checkbox,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "../../Components";
 
-import { 
-  useEffect, 
-  useState,   
-} from "react";
+import { DeleteIcon, EditIcon } from "../../Components/Icons";
 
-import { faker } from "@faker-js/faker";
+import { useEffect, useState } from "react";
+
+import { getContato, updateContato, getFornecedor, deleteContato } from "./Contato";
 
 export default function ContatoList() {
   const [rows, setRows] = useState([]);
@@ -29,19 +37,64 @@ export default function ContatoList() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
+  const [open, setOpen] = useState(false);
+  const [selectedContato, setSelectedContato] = useState(null);
+  const [fornecedor, setFornecedor] = useState("");
+  const [fornecedores, setFornecedores] = useState([]);
 
-  const db = () => {
-    const tempRows = [];
-    for (let i = 0; i < 100; i++) {
-      const newRow = {
-        id: i,
-        nome: faker.person.fullName(),
-        email: faker.internet.email(),
-        telefone: faker.phone.number(),
-      };
-      tempRows.push(newRow);
-    }
-    setRows(tempRows);
+  const handleFornecedor = (event) => {
+    setFornecedor(event.target.value);
+  };
+
+  const handleClickOpen = (contato) => {
+    setSelectedContato(contato);
+    setFornecedor(contato.fornecedor || "");
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedContato(null);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteContato(id);
+    db(); //Atualiza a lista de produtos após a exclusão
+  };
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries(formData.entries());
+    const updatedContato = {
+      id: formJson.id,
+      nome: formJson.nome,
+      email: formJson.email,
+      telefone: formJson.telefone,
+      fornecedor: fornecedor, // Usar o estado fornecedor atualizado
+    };
+    
+    await updateContato(updatedContato);
+    handleClose();
+    db(); //Atualiza a lista de produtos após a edição
+  };
+
+  const db = async () => {
+    const tempRows = await getContato();
+    const newRow = tempRows.map((row) => ({
+      id: row.id,
+      nome: row.nome,
+      email: row.email,
+      telefone: row.telefone,
+      fornecedor: row.fornecedor,
+    }));
+    setRows(newRow);
+  };
+
+  const fetchFornecedores = async () => {
+    const tempFornecedores = await getFornecedor();
+    setFornecedores(tempFornecedores);
+    console.log(fornecedores)
   };
 
   const handleChangePage = (event, newPage) => {
@@ -78,13 +131,13 @@ export default function ContatoList() {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const handleSearchChange = (event) => { // Função para atualizar a consulta de busca
+  const handleSearchChange = (event) => {
+    // Função para atualizar a consulta de busca
     setSearchQuery(event.target.value);
   };
 
@@ -93,11 +146,13 @@ export default function ContatoList() {
     (row) =>
       row.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
       row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.telefone.toLowerCase().includes(searchQuery.toLowerCase())
+      row.telefone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.fornecedor.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
     db();
+    fetchFornecedores(); // Carregar fornecedores quando o componente for montado
   }, []);
 
   return (
@@ -116,24 +171,26 @@ export default function ContatoList() {
       <Typography variant="h3">Lista de Contatos</Typography>
 
       <Grid item={true} xs={12}>
-        <Grid container xs={12} sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "20px",
-          with: "80%",
-        
-        }}>
-
-      <TextField        
-        label="Localizar Contato"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        sx={{  
-          width: "80%"
-        }}
-      />
+        <Grid
+          container
+          xs={12}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "20px",
+            with: "80%",
+          }}
+        >
+          <TextField
+            label="Localizar Contato"
+            variant="outlined"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{
+              width: "80%",
+            }}
+          />
         </Grid>
         <Grid
           container
@@ -157,7 +214,9 @@ export default function ContatoList() {
                         indeterminate={
                           selected.length > 0 && selected.length < rows.length
                         }
-                        checked={rows.length > 0 && selected.length === rows.length}
+                        checked={
+                          rows.length > 0 && selected.length === rows.length
+                        }
                         onChange={handleSelectAllClick}
                       />
                     </TableCell>
@@ -169,7 +228,7 @@ export default function ContatoList() {
                       NOME
                     </TableCell>
                     <TableCell
-                      align="center"
+                      align="left"
                       sx={{
                         fontWeight: "bold",
                       }}
@@ -192,6 +251,8 @@ export default function ContatoList() {
                     >
                       FORNECEDOR
                     </TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -216,7 +277,127 @@ export default function ContatoList() {
                           </TableCell>
                           <TableCell align="left">{row.email}</TableCell>
                           <TableCell align="center">{row.telefone}</TableCell>
-                          <TableCell align="center">Fornecedor</TableCell>
+                          <TableCell align="center">{row.fornecedor}</TableCell>
+                          <TableCell sx={{
+                            width: '10px'
+                          }}>
+                            <Button
+                              onClick={() => handleClickOpen(row)}
+                              variant="outlined"
+
+                            >
+                              <EditIcon />
+                            </Button>
+                          </TableCell>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{
+                              component: "form",
+                              onSubmit: handleEditSubmit,
+                            }}
+                          >
+                            <DialogTitle>Editar</DialogTitle>
+                            <DialogContent>
+                              <DialogContentText>
+                                Altere os campos abaixo para editar seu
+                                conteúdo.
+                              </DialogContentText>
+                              {selectedContato && (
+                                <>
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="id"
+                                    name="id"
+                                    label="ID"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    InputProps={{
+                                      readOnly: true,
+                                    }}
+                                    defaultValue={selectedContato.id}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="nome"
+                                    name="nome"
+                                    label="Nome"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedContato.nome}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="email"
+                                    name="email"
+                                    label="E-mail"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedContato.email}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="telefone"
+                                    name="telefone"
+                                    label="Telefone"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedContato.telefone}
+                                  />
+                                  <FormControl sx={{
+                                    width: "100%",
+                                    marginTop: "5px"
+                                  }}>
+                                    <InputLabel id="Fornecedor">Fornecedor</InputLabel>
+                                    <Select
+                                      value={fornecedor}
+                                      onChange={handleFornecedor}
+                                      label="Fornecedor"
+                                    >
+                                      {fornecedores.map((fornecedor, index) => (
+                                        <MenuItem 
+                                          key={index}
+                                          value={fornecedor.razaoSocial}
+                                        >
+                                          {fornecedor.razaoSocial}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </FormControl>
+                                </>
+                              )}
+                            </DialogContent>
+                            <DialogActions>
+                              <Button 
+                              variant="outlined"
+                              color="error"
+                              onClick={handleClose}
+                              >
+                                Cancelar</Button>
+                              <Button type="submit">Salvar</Button>
+                            </DialogActions>
+                          </Dialog>
+
+                          <TableCell  sx={{
+                            width: '10px'
+                          }}>
+                            <Button
+                            onClick={() => handleDelete(row.id)}
+                            variant="outlined"
+                            color="error"
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })}

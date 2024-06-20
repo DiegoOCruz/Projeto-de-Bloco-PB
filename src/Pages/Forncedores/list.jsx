@@ -28,9 +28,8 @@ import {
   useState,   
 } from "react";
 
-import { getFornecedor } from "./Fornecedor";
+import { deleteFornecedor, getFornecedor, updateFornecedor } from "./Fornecedor";
 
-//TODO: Implementar a função de Ediçao/exclusão de fornecedor
 
 export default function FornecedorList() {
   const [rows, setRows] = useState([]);
@@ -38,6 +37,41 @@ export default function FornecedorList() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
+  const [open, setOpen] = useState(false);
+  const [selectedFornecedor, setSelectedFornecedor] = useState(null);
+
+
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formJson = Object.fromEntries(formData.entries());
+    const updatedFornecedor = {
+      id: formJson.id,
+      nome: formJson.nome,
+      email: formJson.email,
+      telefone: formJson.telefone,
+    };
+    await updateFornecedor(updatedFornecedor);
+    handleClose();
+    db(); //Atualiza a lista de produtos após a edição
+  };
+
+  
+  const handleDelete = async (id) => {
+    await deleteFornecedor(id);
+    db(); //Atualiza a lista de produtos após a exclusão
+  };
+
+  const handleClickOpen = (fornecedor) => {
+    setSelectedFornecedor(fornecedor);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedFornecedor(null);
+  };
 
   const db = async () => {
     
@@ -178,7 +212,7 @@ export default function FornecedorList() {
                       NOME
                     </TableCell>
                     <TableCell
-                      align="center"
+                      align="left"
                       sx={{
                         fontWeight: "bold",
                       }}
@@ -235,13 +269,93 @@ export default function FornecedorList() {
                           <TableCell sx={{
                             width: "10px"
                           }}>
-                            <Button><EditIcon/></Button>
+                            <Button
+                            onClick={() => handleClickOpen(row)}
+                            ><EditIcon/></Button>
                           </TableCell>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{
+                              component: "form",
+                              onSubmit: handleEditSubmit,
+                            }}
+                          >
+                            <DialogTitle>Editar</DialogTitle>
+                            <DialogContent>
+                              <DialogContentText>
+                                Altere os campos abaixo para editar seu
+                                conteúdo.
+                              </DialogContentText>
+                              {selectedFornecedor && (
+                                <>
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="id"
+                                    name="id"
+                                    label="ID"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    InputProps={{
+                                      readOnly: true,
+                                    }}
+                                    defaultValue={selectedFornecedor.id}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="nome"
+                                    name="nome"
+                                    label="Nome"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedFornecedor.nome}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="email"
+                                    name="email"
+                                    label="E-mail"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedFornecedor.email}
+                                  />
+                                  <TextField
+                                    required
+                                    margin="dense"
+                                    id="telefone"
+                                    name="telefone"
+                                    label="Telefone"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    defaultValue={selectedFornecedor.telefone}
+                                  />
+                                </>
+                              )}
+                            </DialogContent>
+                            <DialogActions>
+                              <Button 
+                              variant="outlined"
+                              color="error"
+                              onClick={handleClose}>Cancelar</Button>
+                              <Button type="submit">Salvar</Button>
+                            </DialogActions>
+                          </Dialog>
 
                           <TableCell sx={{
                             width: "10px"
                           }}>
-                            <Button><DeleteIcon/></Button>
+                            <Button 
+                            variant="outlined"
+                            color="error"
+                            onClick={() => handleDelete(row.id)}><DeleteIcon/></Button>
                           </TableCell>
                         </TableRow>
                       );

@@ -27,9 +27,9 @@ export async function updateFornecedor(updatedFornecedor) {
     try {
         const docRef = doc(db, "fornecedor", updatedFornecedor.id);
         await updateDoc(docRef, {
-            nome: updatedFornecedor.nome,
-            descricao: updatedFornecedor.descricao,
-            ncm: updatedFornecedor.ncm
+            razaoSocial: updatedFornecedor.nome,
+            email: updatedFornecedor.email,
+            telefone: updatedFornecedor.telefone,
         });
         console.log("Document updated with ID: ", updatedFornecedor.id);
     } catch (e) {

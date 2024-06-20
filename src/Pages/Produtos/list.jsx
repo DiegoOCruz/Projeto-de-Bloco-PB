@@ -339,13 +339,20 @@ export default function ProdutosList() {
                               )}
                             </DialogContent>
                             <DialogActions>
-                              <Button onClick={handleClose}>Cancelar</Button>
+                              <Button 
+                              onClick={handleClose}
+                              variant="outlined"
+                              color="error"
+                              >Cancelar</Button>
                               <Button type="submit">Salvar</Button>
                             </DialogActions>
                           </Dialog>
 
                           <TableCell>
-                            <Button onClick={() => handleDelete(row.id)}>
+                            <Button 
+                            variant="outlined"
+                            color="error"
+                            onClick={() => handleDelete(row.id)}>
                               <DeleteIcon />
                             </Button>
                           </TableCell>
