@@ -16,7 +16,7 @@ const ProdutoList = lazy(() => import('./Pages/Produtos/list'));
 const Registro = lazy(() => import('./Pages/Registro'));
 
 function App() {
-  const [logar, setLogar] = useState("");
+  const [logar, setLogar] = useState("aaa");
   
   return (
     <Router>

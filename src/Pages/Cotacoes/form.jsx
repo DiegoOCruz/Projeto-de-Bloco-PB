@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -15,12 +16,13 @@ import {
 } from "../../Components";
 
 import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
-import { getFornecedor, getProducts } from "./Cotacoes";
+import { addCotacao, getFornecedor, getProducts } from "./Cotacoes";
 
 export default function CotacoesForm() {
   const [fields, setFields] = useState([
     { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
   ]);
+  const [quantidade, setQuantidade] = useState("");
   const [produtoList, setProdutoList] = useState([]);
   const [fornecedorList, setFornecedorList] = useState([]);
 
@@ -45,12 +47,12 @@ export default function CotacoesForm() {
     const newFields = fields.slice();
     newFields[index][field] = value;
 
-    if (field === "quantidade" || field === "preco") {
-      const quantidade = parseFloat(newFields[index].quantidade) || 0;
+    if (quantidade || field === "preco") {
+      const quantidadeMult = parseFloat(quantidade) || 0;
       const preco = parseFloat(newFields[index].preco) || 0;
-      newFields[index].total = (quantidade * preco).toFixed(2);
+      newFields[index].total = (quantidadeMult * preco).toFixed(2);
     }
-    
+
     setFields(newFields);
   };
 
@@ -77,6 +79,37 @@ export default function CotacoesForm() {
     newFields[0].produto = produtoSelecionado; // Atualiza o campo produto no primeiro objeto
     setFields(newFields);
   };
+  //---------------------- Captura dos dados e envio para o FireBase -------------------//
+  const navigate = useNavigate();
+
+  const converterFornecedoresObject = (fields) => {
+    let fornecedoresObj = {};
+    fields.forEach((field, index) => {
+      fornecedoresObj[`fornecedor_${index}`] = {
+        fornecedor: field.fornecedor,
+        preco: field.preco,
+        total: field.total,
+      };
+    });
+    return fornecedoresObj;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Evita que a página seja recarregada
+    const data = {
+      produto: fields[0].produto,
+      quantidade: quantidade,
+      fornecedores: converterFornecedoresObject(fields),
+    };
+    //console.log(data);
+    await addCotacao(data);
+
+    setFields([{ produto: "", fornecedor: "", quantidade: "", preco: "", total: "" }]);
+    setQuantidade("");
+  
+    
+    navigate("/cotacoes/form");
+  };
 
   return (
     <Grid
@@ -102,26 +135,36 @@ export default function CotacoesForm() {
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          Defina o produto desta cotação:
+          Informe as informações gerais desta cotação:
         </Typography>
-        <FormControl fullWidth>
+        <FormControl
+          fullWidth
+          sx={{
+            gap: "10px",
+          }}
+        >
           <InputLabel id="produto-select-label">Produto</InputLabel>
-          <Select 
-            labelId="produto-select-label" 
-            id="produto-select" 
+          <Select
+            labelId="produto-select-label"
+            id="produto-select"
             label="Produto"
             value={fields[0].produto} // Valor selecionado
             onChange={handleProdutoChange} // Função de mudança
           >
             {produtoList.map((produto, index) => (
-              <MenuItem 
-                key={index} 
-                value={produto.nome}
-              >
+              <MenuItem key={index} value={produto.nome}>
                 {produto.nome}
               </MenuItem>
             ))}
           </Select>
+
+          <TextField
+            type="number"
+            label="Quantidade"
+            value={quantidade}
+            onChange={(e) => setQuantidade(e.target.value)}
+            fullWidth
+          />
         </FormControl>
       </Paper>
       {fields.map((field, index) => (
@@ -135,15 +178,19 @@ export default function CotacoesForm() {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={6}>
               <FormControl fullWidth>
-                <InputLabel id={`fornecedor-select-label-${index}`}>Fornecedor</InputLabel>
+                <InputLabel id={`fornecedor-select-label-${index}`}>
+                  Fornecedor
+                </InputLabel>
                 <Select
                   labelId={`fornecedor-select-label-${index}`}
                   id={`fornecedor-select-${index}`}
                   value={field.fornecedor}
                   label="Fornecedor"
-                  onChange={(e) => handleChange(index, "fornecedor", e.target.value)}
+                  onChange={(e) =>
+                    handleChange(index, "fornecedor", e.target.value)
+                  }
                 >
                   {fornecedorList.map((fornecedor, idx) => (
                     <MenuItem key={idx} value={fornecedor.razaoSocial}>
@@ -153,21 +200,15 @@ export default function CotacoesForm() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                type="number"
-                label="Quantidade"
-                value={field.quantidade}
-                onChange={(e) => handleChange(index, "quantidade", e.target.value)}
-                fullWidth
-              />
-            </Grid>
+
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 type="number"
                 label="Preço"
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">R$</InputAdornment>
+                  ),
                 }}
                 value={field.preco}
                 onChange={(e) => handleChange(index, "preco", e.target.value)}
@@ -179,7 +220,9 @@ export default function CotacoesForm() {
                 type="number"
                 label="Total"
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">R$</InputAdornment>
+                  ),
                   readOnly: true,
                 }}
                 value={field.total}
@@ -188,7 +231,11 @@ export default function CotacoesForm() {
             </Grid>
             <Grid item xs={12}>
               <Stack direction="row" spacing={1} justifyContent="center">
-                <Button onClick={handleAddFields} variant="outlined" startIcon={<AddIcon />}>
+                <Button
+                  onClick={handleAddFields}
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                >
                   Adicionar
                 </Button>
                 <Button
@@ -204,8 +251,11 @@ export default function CotacoesForm() {
           </Grid>
         </Paper>
       ))}
-      <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-        <Button variant="contained" color="primary">
+      <Box sx={{ display: "flex", justifyContent: "center", width: "100%" , gap: "10px"}}>
+      <Button variant="contained" color="primary" component={Link} to={"/cotacoes"}>
+          voltar
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
           Cadastrar
         </Button>
       </Box>
