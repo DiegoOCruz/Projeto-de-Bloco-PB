@@ -17,9 +17,6 @@ import {
 import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 import { getFornecedor, getProducts } from "./Cotacoes";
 
-//TODO: Importar os componentes necessários delete icon/add 
-//TODO: pensar em como caputarar os dos textfields e select
-
 export default function CotacoesForm() {
   const [fields, setFields] = useState([
     { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
@@ -27,6 +24,7 @@ export default function CotacoesForm() {
   const [produtoList, setProdutoList] = useState([]);
   const [fornecedorList, setFornecedorList] = useState([]);
 
+  //---------------------- UseEffect para carregar os produtos e fornecedores -------------------//
   const loadProdutos = async () => {
     const produtos = await getProducts();
     setProdutoList(produtos);
@@ -37,6 +35,12 @@ export default function CotacoesForm() {
     setFornecedorList(fornecedores);
   };
 
+  useEffect(() => {
+    loadProdutos();
+    loadFornecedores();
+  }, []);
+
+  //---------------------- Função para adicionar e remover campos -------------------//
   const handleChange = (index, field, value) => {
     const newFields = fields.slice();
     newFields[index][field] = value;
@@ -46,7 +50,7 @@ export default function CotacoesForm() {
       const preco = parseFloat(newFields[index].preco) || 0;
       newFields[index].total = (quantidade * preco).toFixed(2);
     }
-
+    
     setFields(newFields);
   };
 
@@ -55,6 +59,7 @@ export default function CotacoesForm() {
       ...fields,
       { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
     ]);
+    console.log(fields);
   };
 
   const handleRemoveFields = (index) => {
@@ -66,10 +71,12 @@ export default function CotacoesForm() {
     setFields(newFields);
   };
 
-  useEffect(() => {
-    loadProdutos();
-    loadFornecedores();
-  }, []);
+  const handleProdutoChange = (event) => {
+    const produtoSelecionado = event.target.value;
+    const newFields = fields.slice();
+    newFields[0].produto = produtoSelecionado; // Atualiza o campo produto no primeiro objeto
+    setFields(newFields);
+  };
 
   return (
     <Grid
@@ -99,9 +106,18 @@ export default function CotacoesForm() {
         </Typography>
         <FormControl fullWidth>
           <InputLabel id="produto-select-label">Produto</InputLabel>
-          <Select labelId="produto-select-label" id="produto-select" label="Produto">
+          <Select 
+            labelId="produto-select-label" 
+            id="produto-select" 
+            label="Produto"
+            value={fields[0].produto} // Valor selecionado
+            onChange={handleProdutoChange} // Função de mudança
+          >
             {produtoList.map((produto, index) => (
-              <MenuItem key={index} value={produto.nome}>
+              <MenuItem 
+                key={index} 
+                value={produto.nome}
+              >
                 {produto.nome}
               </MenuItem>
             ))}
