@@ -2,7 +2,7 @@ import { Grid, Box, TextField, Button, Typography } from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Services/firebaseConfig";
@@ -21,6 +21,9 @@ export default function Login({ setLogar }) {
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
+  useEffect(() => {
+    alert("Email: email@email.com\nSenha: 123456");
+  },[]);
 
   function login() {
     signInWithEmailAndPassword(auth, email, password)
