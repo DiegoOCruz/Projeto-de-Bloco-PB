@@ -28,6 +28,7 @@ export {default as DialogActions } from './DialogActions';
 export {default as DialogContentText} from './DialogContentText'
 export {default as Stack } from './Stack';
 export {default as InputAdornment } from './InputAdornment';
+export {default as Alert } from './Alert';
 
 
 

@@ -13,20 +13,40 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import {Link } from "react-router-dom";
+import { useState } from 'react';
 
-const pages = [
-  { name: 'Home', path: '/' },
-  { name: 'Cotações', path: '/cotacoes' },
-  { name: 'Fornecedores', path: '/fornecedores' },
-  { name: 'Contatos', path: '/contato' },
-  { name: 'Produtos', path: '/produtos' },
-  { name: 'Adicionar Usuários', path: '/register' },
-];
-const settings = [ 'Logout'];
 
-function ResponsiveAppBar({setLogar}) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+function ResponsiveAppBar({setLogar, admin}) {
+  React.useEffect(() => {
+    if(admin){
+      setPages([
+        { name: 'Home', path: '/' },
+        { name: 'Cotações', path: '/cotacoes' },
+        { name: 'Fornecedores', path: '/fornecedores' },
+        { name: 'Contatos', path: '/contato' },
+        { name: 'Produtos', path: '/produtos' },
+        { name: 'Adicionar Usuários', path: '/register' },
+        { name: 'Requisições', path: '/requisicoes' },
+      ]);
+    }else{
+      setPages([
+        { name: 'Home', path: '/' },
+        { name: 'Cotações', path: '/cotacoes' },
+        { name: 'Fornecedores', path: '/fornecedores' },
+        { name: 'Contatos', path: '/contato' },
+        { name: 'Produtos', path: '/produtos' },
+        { name: 'Adicionar Usuários', path: '/register' },
+      ]);
+    }
+  }, [admin]);
+
+
+  const settings = [ 'Logout'];
+
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [pages, setPages] = useState([]);
+  
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);

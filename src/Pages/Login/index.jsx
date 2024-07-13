@@ -1,4 +1,4 @@
-import { Grid, Box, TextField, Button, Typography } from "../../Components";
+import { Grid, Box, TextField, Button, Typography, Alert } from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
@@ -7,10 +7,11 @@ import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Services/firebaseConfig";
 
-export default function Login({ setLogar }) {
+export default function Login({ setLogar, setAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -22,7 +23,7 @@ export default function Login({ setLogar }) {
     setPassword(e.target.value);
   };
   useEffect(() => {
-    alert("Email: email@email.com\nSenha: 123456");
+    //alert("Email: email@email.com\nSenha: 123456");
   },[]);
 
   function login() {
@@ -32,13 +33,23 @@ export default function Login({ setLogar }) {
         const user = userCredential.user;
         console.log(user);
         setLogar(user.email);
+        if(user.email){
+          setAdmin(isAdmin(user.email));
+        }
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setError(errorMessage);
         console.log(errorCode, errorMessage);
       });
   }
+
+  function isAdmin(user) {
+    //console.log(user.endsWith("@admin.com"));
+    return user.endsWith("@admin.com");
+  };
+
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       login();
@@ -77,6 +88,9 @@ export default function Login({ setLogar }) {
           },
         }}
       >
+        {error && 
+          <Alert severity="error">{error == "Firebase: Error (auth/invalid-email)." ? "ERRO! Usuário e/ou senha inválidos!" : error }</Alert>}
+
         <Box mb={2}>
           <Typography variant="h4">Login</Typography>
         </Box>

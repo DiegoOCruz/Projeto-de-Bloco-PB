@@ -94,7 +94,7 @@ export default function ContatoList() {
   const fetchFornecedores = async () => {
     const tempFornecedores = await getFornecedor();
     setFornecedores(tempFornecedores);
-    console.log(fornecedores)
+    //console.log(fornecedores)
   };
 
   const handleChangePage = (event, newPage) => {
