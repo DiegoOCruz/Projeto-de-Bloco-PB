@@ -16,10 +16,32 @@ import {
       console.error("Error adding document: ", e);
     }
   }
+
+  export async function addRequisicao(novaRequisicao) {
+    try {
+      const docRef = await addDoc(collection(db, "requisicao"), novaRequisicao);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
   
   export async function getCotacao() {
     try {
       const querySnapshot = await getDocs(collection(db, "cotacao"));
+      const products = [];
+      querySnapshot.forEach((doc) => {
+        products.push({ id: doc.id, ...doc.data() });
+      });
+      return products;
+    } catch (e) {
+      console.error("Error getting documents: ", e);
+    }
+  }
+
+  export async function getRequisicao() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "requisicao"));
       const products = [];
       querySnapshot.forEach((doc) => {
         products.push({ id: doc.id, ...doc.data() });

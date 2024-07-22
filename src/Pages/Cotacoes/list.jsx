@@ -15,20 +15,23 @@ import {
   TextField,
   Stack,
 } from "../../Components";
-import {  DeleteIcon } from "../../Components/Icons";
+import { DeleteIcon, RequisicaoIcon } from "../../Components/Icons";
 import { useEffect, useState } from "react";
-import { deleteCotacao, getCotacao } from "./Cotacoes";
+import { deleteCotacao, getCotacao, addRequisicao, getRequisicao} from "./Cotacoes";
 
 export default function CotacoesList() {
   const [cotacoeslist, setCotacoesList] = useState([]);
   const [filteredCotacoesList, setFilteredCotacoesList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [requisicoesList, setRequisicoesList] = useState([]);
 
   const db = async () => {
     const cotacoes = await getCotacao();
     setCotacoesList(cotacoes);
     setFilteredCotacoesList(cotacoes);
+    const requisicoes = await getRequisicao();
+    setRequisicoesList(requisicoes);
+    //console.log(requisicoes);
   };
 
   useEffect(() => {
@@ -47,17 +50,46 @@ export default function CotacoesList() {
 
   const handleDelete = async (id) => {
     await deleteCotacao(id);
-    db(); //Atualiza a lista de produtos após a exclusão
+    db(); // Atualiza a lista de produtos após a exclusão
   };
 
   // Função para encontrar o fornecedor com o menor valor total dentro de cada cotação
   const getMinFornecedorId = (fornecedores) => {
     return Object.values(fornecedores).reduce(
-      (min, curr) => (parseFloat(curr.total) < parseFloat(min.total) ? curr : min),
+      (min, curr) =>
+        parseFloat(curr.total) < parseFloat(min.total) ? curr : min,
       { total: Infinity }
     );
   };
-  //----------------------------------------------------------------------------------
+
+  // Função para gerar o JSON e imprimir no console e enviar para o Firebase
+  const handleGenerateRequisicao = async (row) => {
+    const minFornecedor = getMinFornecedorId(row.fornecedores);
+    let requisicaoExistente = false;
+  
+    requisicoesList.forEach((requisicao) => {
+      if (requisicao.cotacaoId === row.id) {
+        alert("Requisição já gerada para esta cotação!");
+        requisicaoExistente = true;
+      }
+    });
+  
+    if (!requisicaoExistente) {
+      const data = {
+        cotacaoId: row.id,
+        produto: row.produto,
+        quantidade: row.quantidade,
+        fornecedor: minFornecedor.fornecedor,
+        preco: minFornecedor.preco,
+        total: minFornecedor.total,
+      };
+      console.log(JSON.stringify(data, null, 2));
+      await addRequisicao(data);
+      db(); // Atualiza a lista de produtos após a adição
+    }
+  };
+
+
   return (
     <Container sx={{ padding: "40px", textAlign: "center" }}>
       <Typography variant="h3" gutterBottom>
@@ -154,6 +186,13 @@ export default function CotacoesList() {
                         marginTop: "10px",
                       }}
                     >
+                      <Button
+                        variant="outlined"
+                        startIcon={<RequisicaoIcon />}
+                        onClick={() => handleGenerateRequisicao(row)}
+                      >
+                        Gerar Requisição
+                      </Button>
                       <Button
                         color="error"
                         variant="outlined"
