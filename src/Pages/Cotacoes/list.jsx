@@ -84,7 +84,10 @@ export default function CotacoesList() {
         total: minFornecedor.total,
       };
       console.log(JSON.stringify(data, null, 2));
-      await addRequisicao(data);
+      const requisicao = await addRequisicao(data);
+      if (requisicao && requisicao.id) { // Verificar se requisicao não é null e tem um id
+        alert("Requisição gerada com sucesso!");
+      }
       db(); // Atualiza a lista de produtos após a adição
     }
   };

@@ -22,10 +22,11 @@ export default function Login({ setLogar, setAdmin }) {
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
+  {/* 
   useEffect(() => {
-    //alert("Email: email@email.com\nSenha: 123456");
+    alert("Email: email@email.com\nSenha: 123456");
   },[]);
-
+*/}
   function login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
