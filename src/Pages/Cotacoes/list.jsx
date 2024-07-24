@@ -15,9 +15,19 @@ import {
   TextField,
   Stack,
 } from "../../Components";
-import { DeleteIcon, RequisicaoIcon } from "../../Components/Icons";
+import {
+  AddIcon,
+  DeleteIcon,
+  FileIcon,
+  RequisicaoIcon,
+} from "../../Components/Icons";
 import { useEffect, useState } from "react";
-import { deleteCotacao, getCotacao, addRequisicao, getRequisicao} from "./Cotacoes";
+import {
+  deleteCotacao,
+  getCotacao,
+  addRequisicao,
+  getRequisicao,
+} from "./Cotacoes";
 
 export default function CotacoesList() {
   const [cotacoeslist, setCotacoesList] = useState([]);
@@ -39,14 +49,18 @@ export default function CotacoesList() {
   }, []);
 
   useEffect(() => {
-    {/*
+    {
+      /*
       antes de chamar toString() ou toLowerCase(), o código verifica se a propriedade existe. Se a propriedade for undefined, a expressão correspondente avaliará como false, e o código não tentará chamar um método nela, evitando assim o erro.
-    */}
+    */
+    }
     setFilteredCotacoesList(
       cotacoeslist.filter(
-        (cotacao) => 
+        (cotacao) =>
           (cotacao.id ? cotacao.id.toString().includes(searchTerm) : false) ||
-          (cotacao.produto ? cotacao.produto.toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+          (cotacao.produto
+            ? cotacao.produto.toLowerCase().includes(searchTerm.toLowerCase())
+            : false) ||
           (cotacao.data ? cotacao.data.toString().includes(searchTerm) : false)
       )
     );
@@ -70,14 +84,14 @@ export default function CotacoesList() {
   const handleGenerateRequisicao = async (row) => {
     const minFornecedor = getMinFornecedorId(row.fornecedores);
     let requisicaoExistente = false;
-  
+
     requisicoesList.forEach((requisicao) => {
       if (requisicao.cotacaoId === row.id) {
         alert("Requisição já gerada para esta cotação!");
         requisicaoExistente = true;
       }
     });
-  
+
     if (!requisicaoExistente) {
       const data = {
         data: row.data,
@@ -90,13 +104,13 @@ export default function CotacoesList() {
       };
       console.log(JSON.stringify(data, null, 2));
       const requisicao = await addRequisicao(data);
-      if (requisicao && requisicao.id) { // Verificar se requisicao não é null e tem um id
+      if (requisicao && requisicao.id) {
+        // Verificar se requisicao não é null e tem um id
         alert("Requisição gerada com sucesso!");
       }
       db(); // Atualiza a lista de produtos após a adição
     }
   };
-
 
   return (
     <Container sx={{ padding: "40px", textAlign: "center" }}>
@@ -236,8 +250,24 @@ export default function CotacoesList() {
           color="secondary"
           component={Link}
           to="/cotacoes/form"
+          sx={{ marginRight: "10px" }}
         >
+          <AddIcon
+            sx={{
+              marginRight: "10px",
+              color: "white",
+            }}
+          />
           Adicionar nova Cotação
+        </Button>
+        <Button variant="contained" color="warning">
+          <FileIcon
+            sx={{
+              marginRight: "10px",
+              color: "white",
+            }}
+          />
+          exportar para csv
         </Button>
       </Box>
     </Container>
