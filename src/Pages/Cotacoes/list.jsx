@@ -29,6 +29,10 @@ import {
   getRequisicao,
 } from "./Cotacoes";
 
+//todo: importar o ícone HomeIcon
+import HomeIcon from '@mui/icons-material/Home';
+
+
 export default function CotacoesList() {
   const [cotacoeslist, setCotacoesList] = useState([]);
   const [filteredCotacoesList, setFilteredCotacoesList] = useState([]);
@@ -49,8 +53,9 @@ export default function CotacoesList() {
   }, []);
 
   useEffect(() => {
+    
     {
-      /*
+    /*
       antes de chamar toString() ou toLowerCase(), o código verifica se a propriedade existe. Se a propriedade for undefined, a expressão correspondente avaliará como false, e o código não tentará chamar um método nela, evitando assim o erro.
     */
     }
@@ -110,6 +115,20 @@ export default function CotacoesList() {
       }
       db(); // Atualiza a lista de produtos após a adição
     }
+  };
+
+  const handleCsv = (filteredCotacoesList) => {
+    filteredCotacoesList.map((row) => {
+      const data = {
+        id: row.id,
+        data: row.data,
+        produto: row.produto,
+        quantidade: row.quantidade,
+        fornecedores: row.fornecedores,
+      };
+      console.log(JSON.stringify(data, null, 2));
+    });
+
   };
 
   return (
@@ -242,6 +261,7 @@ export default function CotacoesList() {
           component={Link}
           to="/"
           sx={{ marginRight: "10px" }}
+          startIcon={<HomeIcon />}
         >
           Home
         </Button>
@@ -251,22 +271,16 @@ export default function CotacoesList() {
           component={Link}
           to="/cotacoes/form"
           sx={{ marginRight: "10px" }}
+          startIcon={<AddIcon />}
         >
-          <AddIcon
-            sx={{
-              marginRight: "10px",
-              color: "white",
-            }}
-          />
           Adicionar nova Cotação
         </Button>
-        <Button variant="contained" color="warning">
-          <FileIcon
-            sx={{
-              marginRight: "10px",
-              color: "white",
-            }}
-          />
+        <Button 
+          variant="contained" 
+          color="warning" 
+          startIcon={<FileIcon />}
+          onClick={() => handleCsv(filteredCotacoesList)}
+          >
           exportar para csv
         </Button>
       </Box>

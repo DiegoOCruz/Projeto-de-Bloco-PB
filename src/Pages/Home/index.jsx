@@ -1,4 +1,4 @@
-import { Grid, Typography } from "../../Components";
+import { Grid, Paper, Typography } from "../../Components";
 
 export default function Home() {
   return (
@@ -14,8 +14,9 @@ export default function Home() {
           height: "100vh",
         }}
       >
+
         <Grid>
-          <Typography variant="h3">ACME</Typography>
+          <img src=".\public\ACME_Logo.png" alt="ACME" />
         </Grid>
 
         <Grid>

@@ -72,7 +72,7 @@ export default function Login({ setLogar, setAdmin }) {
           },
         }}
       >
-        <img src="https://cardpress.com.br/img/login.png" alt="" />
+        <img src=".\public\ACME_Logo.png" alt="" />
       </Grid>
 
       <Grid

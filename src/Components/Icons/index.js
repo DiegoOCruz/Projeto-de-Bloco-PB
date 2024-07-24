@@ -3,3 +3,4 @@ export { default as EditIcon} from "./Edit"
 export { default as AddIcon } from "./Add"
 export { default as RequisicaoIcon } from "./Requisicao"
 export { default as FileIcon } from "./File"
+

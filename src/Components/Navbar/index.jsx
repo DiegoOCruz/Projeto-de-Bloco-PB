@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import {Link } from "react-router-dom";
 import { useState } from 'react';
+import {LogoAcme as Logo} from '../../Components';
 
 
 function ResponsiveAppBar({setLogar, admin}) {
@@ -71,7 +72,8 @@ function logout(){
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          {/*<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />*/}
+          <Logo />
           <Typography
             variant="h6"
             noWrap
@@ -131,7 +133,8 @@ function logout(){
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />*/}
+      
           <Typography
             variant="h5"
             noWrap
