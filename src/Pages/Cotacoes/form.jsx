@@ -20,8 +20,9 @@ import { addCotacao, getFornecedor, getProducts } from "./Cotacoes";
 
 export default function CotacoesForm() {
   const [fields, setFields] = useState([
-    { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
+    {data: "", produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
   ]);
+  const [date, setDate] = useState("");
   const [quantidade, setQuantidade] = useState("");
   const [produtoList, setProdutoList] = useState([]);
   const [fornecedorList, setFornecedorList] = useState([]);
@@ -59,7 +60,7 @@ export default function CotacoesForm() {
   const handleAddFields = () => {
     setFields([
       ...fields,
-      { produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
+      {produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
     ]);
     console.log(fields);
   };
@@ -96,18 +97,23 @@ export default function CotacoesForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Evita que a página seja recarregada
+      // Filtra campos com fornecedor ou preco vazios
+    const campoValido = fields.filter(field => field.fornecedor && field.preco);
     const data = {
+      data: date,
       produto: fields[0].produto,
       quantidade: quantidade,
-      fornecedores: converterFornecedoresObject(fields),
+      fornecedores: converterFornecedoresObject(campoValido),
     };
     //console.log(data);
     await addCotacao(data);
 
-    setFields([{ produto: "", fornecedor: "", quantidade: "", preco: "", total: "" }]);
+    setFields([
+      {produto: "", fornecedor: "", quantidade: "", preco: "", total: "" },
+    ]);
     setQuantidade("");
-  
-    
+    setDate("");
+
     navigate("/cotacoes/form");
   };
 
@@ -143,6 +149,16 @@ export default function CotacoesForm() {
             gap: "10px",
           }}
         >
+          <TextField
+            label="Data"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <FormControl fullWidth>
           <InputLabel id="produto-select-label">Produto</InputLabel>
           <Select
             labelId="produto-select-label"
@@ -157,7 +173,7 @@ export default function CotacoesForm() {
               </MenuItem>
             ))}
           </Select>
-
+        </FormControl>
           <TextField
             type="number"
             label="Quantidade"
@@ -251,8 +267,20 @@ export default function CotacoesForm() {
           </Grid>
         </Paper>
       ))}
-      <Box sx={{ display: "flex", justifyContent: "center", width: "100%" , gap: "10px"}}>
-      <Button variant="contained" color="primary" component={Link} to={"/cotacoes"}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          gap: "10px",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to={"/cotacoes"}
+        >
           voltar
         </Button>
         <Button variant="contained" color="primary" onClick={handleSubmit}>

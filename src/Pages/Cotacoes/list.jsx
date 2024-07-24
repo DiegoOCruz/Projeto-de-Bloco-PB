@@ -39,11 +39,15 @@ export default function CotacoesList() {
   }, []);
 
   useEffect(() => {
+    {/*
+      antes de chamar toString() ou toLowerCase(), o código verifica se a propriedade existe. Se a propriedade for undefined, a expressão correspondente avaliará como false, e o código não tentará chamar um método nela, evitando assim o erro.
+    */}
     setFilteredCotacoesList(
       cotacoeslist.filter(
-        (cotacao) =>
-          cotacao.id.toString().includes(searchTerm) ||
-          cotacao.produto.toLowerCase().includes(searchTerm.toLowerCase())
+        (cotacao) => 
+          (cotacao.id ? cotacao.id.toString().includes(searchTerm) : false) ||
+          (cotacao.produto ? cotacao.produto.toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+          (cotacao.data ? cotacao.data.toString().includes(searchTerm) : false)
       )
     );
   }, [searchTerm, cotacoeslist]);
@@ -76,6 +80,7 @@ export default function CotacoesList() {
   
     if (!requisicaoExistente) {
       const data = {
+        data: row.data,
         cotacaoId: row.id,
         produto: row.produto,
         quantidade: row.quantidade,
@@ -135,6 +140,9 @@ export default function CotacoesList() {
                     sx={{ fontWeight: "bold", marginBottom: "10px" }}
                   >
                     Cotação ID: {row.id}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ marginBottom: "10px" }}>
+                    Data: {row.data}
                   </Typography>
                   <Typography variant="subtitle1" sx={{ marginBottom: "10px" }}>
                     Produto: {row.produto}
