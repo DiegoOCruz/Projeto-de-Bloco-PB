@@ -31,6 +31,7 @@ import {
 
 //todo: importar o ícone HomeIcon
 import HomeIcon from '@mui/icons-material/Home';
+import { saveAs } from "file-saver";
 
 
 export default function CotacoesList() {
@@ -117,19 +118,36 @@ export default function CotacoesList() {
     }
   };
 
-  const handleCsv = (filteredCotacoesList) => {
-    filteredCotacoesList.map((row) => {
+  const filterDataToCsv = (filteredCotacoesList) => {
+    const header = "Cotacao_Id,Data,Fornecedor,Produto,Quantidade,Preco,Total\n";
+    const rows = filteredCotacoesList.map((row) => {
       const data = {
         id: row.id,
         data: row.data,
         produto: row.produto,
         quantidade: row.quantidade,
-        fornecedores: row.fornecedores,
+        cotacoes: row.fornecedores,
       };
-      console.log(JSON.stringify(data, null, 2));
-    });
-
+      return convertToCSV(data);
+    }).join("\n");
+    return header + rows;
   };
+  
+  const convertToCSV = (obj) => {
+    const rows = Object.values(obj.cotacoes).map(cotacao => 
+      `${obj.id},${obj.data},${cotacao.fornecedor},${obj.produto},${obj.quantidade},${cotacao.preco},${cotacao.total}`
+    ).join("\n");
+    return rows;
+  };
+  
+  const handleCsv = (filteredCotacoesList) => {
+    const csv = filterDataToCsv(filteredCotacoesList);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "cotacoes.csv");
+  };
+
+
+  
 
   return (
     <Container sx={{ padding: "40px", textAlign: "center" }}>

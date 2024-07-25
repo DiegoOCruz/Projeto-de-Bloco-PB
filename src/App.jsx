@@ -17,8 +17,8 @@ const Registro = lazy(() => import("./Pages/Registro"));
 const Requisicoes = lazy(() => import("./Pages/Requisicoes"));
 
 function App() {
-  const [logar, setLogar] = useState("");
-  const [admin, setAdmin] = useState(false);
+  const [logar, setLogar] = useState(""); //TODO mudar para vazio ""
+  const [admin, setAdmin] = useState(false); //TODO mudar para false
 
   return (
     <Router>
