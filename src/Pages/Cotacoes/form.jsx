@@ -276,14 +276,14 @@ export default function CotacoesForm() {
         }}
       >
         <Button
-          variant="contained"
+          variant="outlined"
           color="primary"
           component={Link}
           to={"/cotacoes"}
         >
           voltar
         </Button>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Button variant="outlined" color="primary" onClick={handleSubmit}>
           Cadastrar
         </Button>
       </Box>

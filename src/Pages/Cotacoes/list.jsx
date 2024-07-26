@@ -15,6 +15,7 @@ import {
   TextField,
   Stack,
   HomeButton,
+  AddButton,
 } from "../../Components";
 import {
   AddIcon,
@@ -31,9 +32,8 @@ import {
 } from "./Cotacoes";
 
 //todo: importar o ícone HomeIcon
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import { saveAs } from "file-saver";
-
 
 export default function CotacoesList() {
   const [cotacoeslist, setCotacoesList] = useState([]);
@@ -55,9 +55,8 @@ export default function CotacoesList() {
   }, []);
 
   useEffect(() => {
-    
     {
-    /*
+      /*
       antes de chamar toString() ou toLowerCase(), o código verifica se a propriedade existe. Se a propriedade for undefined, a expressão correspondente avaliará como false, e o código não tentará chamar um método nela, evitando assim o erro.
     */
     }
@@ -120,35 +119,38 @@ export default function CotacoesList() {
   };
 
   const filterDataToCsv = (filteredCotacoesList) => {
-    const header = "Cotacao_Id,Data,Fornecedor,Produto,Quantidade,Preco,Total\n";
-    const rows = filteredCotacoesList.map((row) => {
-      const data = {
-        id: row.id,
-        data: row.data,
-        produto: row.produto,
-        quantidade: row.quantidade,
-        cotacoes: row.fornecedores,
-      };
-      return convertToCSV(data);
-    }).join("\n");
+    const header =
+      "Cotacao_Id,Data,Fornecedor,Produto,Quantidade,Preco,Total\n";
+    const rows = filteredCotacoesList
+      .map((row) => {
+        const data = {
+          id: row.id,
+          data: row.data,
+          produto: row.produto,
+          quantidade: row.quantidade,
+          cotacoes: row.fornecedores,
+        };
+        return convertToCSV(data);
+      })
+      .join("\n");
     return header + rows;
   };
-  
+
   const convertToCSV = (obj) => {
-    const rows = Object.values(obj.cotacoes).map(cotacao => 
-      `${obj.id},${obj.data},${cotacao.fornecedor},${obj.produto},${obj.quantidade},${cotacao.preco},${cotacao.total}`
-    ).join("\n");
+    const rows = Object.values(obj.cotacoes)
+      .map(
+        (cotacao) =>
+          `${obj.id},${obj.data},${cotacao.fornecedor},${obj.produto},${obj.quantidade},${cotacao.preco},${cotacao.total}`
+      )
+      .join("\n");
     return rows;
   };
-  
+
   const handleCsv = (filteredCotacoesList) => {
     const csv = filterDataToCsv(filteredCotacoesList);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "cotacoes.csv");
   };
-
-
-  
 
   return (
     <Container sx={{ padding: "40px", textAlign: "center" }}>
@@ -275,22 +277,17 @@ export default function CotacoesList() {
 
       <Box mt={4}>
         <HomeButton />
-        <Button
-          variant="contained"
-          color="secondary"
-          component={Link}
+        <AddButton
           to="/cotacoes/form"
-          sx={{ marginRight: "10px" }}
-          startIcon={<AddIcon />}
         >
-          Adicionar nova Cotação
-        </Button>
-        <Button 
-          variant="contained" 
-          color="warning" 
+          adicionar nova cotaçao
+        </AddButton>
+        <Button
+          variant="outlined"
+          color="warning"
           startIcon={<FileIcon />}
           onClick={() => handleCsv(filteredCotacoesList)}
-          >
+        >
           exportar para csv
         </Button>
       </Box>

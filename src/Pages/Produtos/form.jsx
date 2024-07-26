@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { Grid, Box, Button, Typography, TextField } from "../../Components";
+import {
+  Grid,
+  Box,
+  Button,
+  Typography,
+  TextField,
+  AddButton,
+} from "../../Components";
 import { addProduct } from "./Product";
 import { useState } from "react";
 
@@ -138,9 +145,15 @@ export default function ProdutoForm() {
               justifyContent: "center",
             }}
           >
-            <Button variant="contained" onClick={handleCadastro}>
-              Cadastrar
+            <Button
+              variant="outlined"
+              component={Link}
+              to="/produtos"
+              sx={{ marginRight: "10px" }}
+            >
+              voltar
             </Button>
+            <AddButton onClick={handleCadastro}>adicionar</AddButton>
           </Box>
         </Grid>
       </Grid>

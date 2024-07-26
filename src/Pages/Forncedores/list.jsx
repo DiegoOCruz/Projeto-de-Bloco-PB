@@ -20,17 +20,19 @@ import {
   DialogContentText,
   DialogTitle,
   HomeButton,
+  AddButton,
 } from "../../Components";
 
 import { DeleteIcon, EditIcon } from "../../Components/Icons";
 
-import { 
-  useEffect, 
-  useState,   
-} from "react";
+import { useEffect, useState } from "react";
 
-import { deleteFornecedor, getFornecedor, updateFornecedor } from "./Fornecedor";
-
+import {
+  deleteFornecedor,
+  getFornecedor,
+  updateFornecedor,
+} from "./Fornecedor";
+import { Add } from "@mui/icons-material";
 
 export default function FornecedorList() {
   const [rows, setRows] = useState([]);
@@ -40,8 +42,6 @@ export default function FornecedorList() {
   const [searchQuery, setSearchQuery] = useState(""); // Estado para a consulta de busca
   const [open, setOpen] = useState(false);
   const [selectedFornecedor, setSelectedFornecedor] = useState(null);
-
-
 
   const handleEditSubmit = async (event) => {
     event.preventDefault();
@@ -58,7 +58,6 @@ export default function FornecedorList() {
     db(); //Atualiza a lista de produtos após a edição
   };
 
-  
   const handleDelete = async (id) => {
     await deleteFornecedor(id);
     db(); //Atualiza a lista de produtos após a exclusão
@@ -75,7 +74,6 @@ export default function FornecedorList() {
   };
 
   const db = async () => {
-    
     const newRow = await getFornecedor(); // Obter dados do fornecedor
     const list = newRow.map((row) => ({
       id: row.id,
@@ -127,7 +125,8 @@ export default function FornecedorList() {
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const handleSearchChange = (event) => { // Função para atualizar a consulta de busca
+  const handleSearchChange = (event) => {
+    // Função para atualizar a consulta de busca
     setSearchQuery(event.target.value);
   };
 
@@ -160,24 +159,26 @@ export default function FornecedorList() {
       <Typography variant="h3">Lista de Fornecedores</Typography>
 
       <Grid item={true} xs={12}>
-        <Grid container xs={12} sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "20px",
-          with: "80%",
-        
-        }}>
-
-      <TextField        
-        label="Localizar Fornecedor"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        sx={{  
-          width: "80%"
-        }}
-      />
+        <Grid
+          container
+          xs={12}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "20px",
+            with: "80%",
+          }}
+        >
+          <TextField
+            label="Localizar Fornecedor"
+            variant="outlined"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{
+              width: "80%",
+            }}
+          />
         </Grid>
         <Grid
           container
@@ -201,7 +202,9 @@ export default function FornecedorList() {
                         indeterminate={
                           selected.length > 0 && selected.length < rows.length
                         }
-                        checked={rows.length > 0 && selected.length === rows.length}
+                        checked={
+                          rows.length > 0 && selected.length === rows.length
+                        }
                         onChange={handleSelectAllClick}
                       />
                     </TableCell>
@@ -236,12 +239,8 @@ export default function FornecedorList() {
                     >
                       CIDADE
                     </TableCell>
-                    <TableCell>                
-                                      
-                    </TableCell>
-                    <TableCell>
-                       
-                    </TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -267,12 +266,16 @@ export default function FornecedorList() {
                           <TableCell align="left">{row.email}</TableCell>
                           <TableCell align="center">{row.telefone}</TableCell>
                           <TableCell align="center">{row.endereco}</TableCell>
-                          <TableCell sx={{
-                            width: "10px"
-                          }}>
-                            <Button
-                            onClick={() => handleClickOpen(row)}
-                            ><EditIcon/></Button>
+                          <TableCell
+                            sx={{
+                              width: "10px",
+                            }}
+                          >
+                            <Button 
+                              variant="outlined"
+                              onClick={() => handleClickOpen(row)}>
+                              <EditIcon />
+                            </Button>
                           </TableCell>
 
                           <Dialog
@@ -342,21 +345,31 @@ export default function FornecedorList() {
                               )}
                             </DialogContent>
                             <DialogActions>
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={handleClose}
+                              >
+                                Cancelar
+                              </Button>
                               <Button 
-                              variant="outlined"
-                              color="error"
-                              onClick={handleClose}>Cancelar</Button>
-                              <Button type="submit">Salvar</Button>
+                                variant="outlined"
+                                type="submit">Salvar</Button>
                             </DialogActions>
                           </Dialog>
 
-                          <TableCell sx={{
-                            width: "10px"
-                          }}>
-                            <Button 
-                            variant="outlined"
-                            color="error"
-                            onClick={() => handleDelete(row.id)}><DeleteIcon/></Button>
+                          <TableCell
+                            sx={{
+                              width: "10px",
+                            }}
+                          >
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleDelete(row.id)}
+                            >
+                              <DeleteIcon />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       );
@@ -390,9 +403,9 @@ export default function FornecedorList() {
           <HomeButton />
         </Box>
         <Box>
-          <Button variant="contained" component={Link} to="/fornecedores/form">
+          <AddButton to="/fornecedores/form">
             Adicionar novo fornecedor
-          </Button>
+          </AddButton>
         </Box>
       </Grid>
     </Grid>

@@ -8,6 +8,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  AddButton,
 } from "../../Components";
 import TextfieldComponent from "../../Components/TextField";
 import { useEffect, useState } from "react";
@@ -193,9 +194,19 @@ export default function ContatoForm() {
               justifyContent: "center",
             }}
           >
-            <Button variant="contained" onClick={handleCadastro}>
-              Cadastrar
+            <Button 
+              variant="outlined" 
+              component={Link}
+              to="/contato"
+              sx={{
+                marginRight: "10px",
+              }}
+              >
+              voltar
             </Button>
+            <AddButton 
+              onClick={handleCadastro}
+            >Adicionar</AddButton>
           </Box>
         </Grid>
       </Grid>

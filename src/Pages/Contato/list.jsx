@@ -24,13 +24,19 @@ import {
   Select,
   MenuItem,
   HomeButton,
+  AddButton,
 } from "../../Components";
 
 import { DeleteIcon, EditIcon } from "../../Components/Icons";
 
 import { useEffect, useState } from "react";
 
-import { getContato, updateContato, getFornecedor, deleteContato } from "./Contato";
+import {
+  getContato,
+  updateContato,
+  getFornecedor,
+  deleteContato,
+} from "./Contato";
 
 export default function ContatoList() {
   const [rows, setRows] = useState([]);
@@ -74,7 +80,7 @@ export default function ContatoList() {
       telefone: formJson.telefone,
       fornecedor: fornecedor, // Usar o estado fornecedor atualizado
     };
-    
+
     await updateContato(updatedContato);
     handleClose();
     db(); //Atualiza a lista de produtos após a edição
@@ -279,13 +285,14 @@ export default function ContatoList() {
                           <TableCell align="left">{row.email}</TableCell>
                           <TableCell align="center">{row.telefone}</TableCell>
                           <TableCell align="center">{row.fornecedor}</TableCell>
-                          <TableCell sx={{
-                            width: '10px'
-                          }}>
+                          <TableCell
+                            sx={{
+                              width: "10px",
+                            }}
+                          >
                             <Button
                               onClick={() => handleClickOpen(row)}
                               variant="outlined"
-
                             >
                               <EditIcon />
                             </Button>
@@ -354,18 +361,22 @@ export default function ContatoList() {
                                     variant="standard"
                                     defaultValue={selectedContato.telefone}
                                   />
-                                  <FormControl sx={{
-                                    width: "100%",
-                                    marginTop: "5px"
-                                  }}>
-                                    <InputLabel id="Fornecedor">Fornecedor</InputLabel>
+                                  <FormControl
+                                    sx={{
+                                      width: "100%",
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    <InputLabel id="Fornecedor">
+                                      Fornecedor
+                                    </InputLabel>
                                     <Select
                                       value={fornecedor}
                                       onChange={handleFornecedor}
                                       label="Fornecedor"
                                     >
                                       {fornecedores.map((fornecedor, index) => (
-                                        <MenuItem 
+                                        <MenuItem
                                           key={index}
                                           value={fornecedor.razaoSocial}
                                         >
@@ -378,23 +389,28 @@ export default function ContatoList() {
                               )}
                             </DialogContent>
                             <DialogActions>
-                              <Button 
-                              variant="outlined"
-                              color="error"
-                              onClick={handleClose}
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={handleClose}
                               >
-                                Cancelar</Button>
-                              <Button type="submit">Salvar</Button>
+                                Cancelar
+                              </Button>
+                              <Button 
+                                variant="outlined"
+                                type="submit">Salvar</Button>
                             </DialogActions>
                           </Dialog>
 
-                          <TableCell  sx={{
-                            width: '10px'
-                          }}>
+                          <TableCell
+                            sx={{
+                              width: "10px",
+                            }}
+                          >
                             <Button
-                            onClick={() => handleDelete(row.id)}
-                            variant="outlined"
-                            color="error"
+                              onClick={() => handleDelete(row.id)}
+                              variant="outlined"
+                              color="error"
                             >
                               <DeleteIcon />
                             </Button>
@@ -431,9 +447,7 @@ export default function ContatoList() {
           <HomeButton />
         </Box>
         <Box>
-          <Button variant="contained" component={Link} to="/contato/form">
-            Adicionar novo contato
-          </Button>
+          <AddButton to="/contato/form">Adicionar novo contato</AddButton>
         </Box>
       </Grid>
     </Grid>

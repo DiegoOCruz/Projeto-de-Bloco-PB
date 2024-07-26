@@ -22,11 +22,10 @@ import {
   DialogContentText,
   DialogTitle,
   HomeButton,
+  AddButton,
 } from "../../Components";
 
 import { DeleteIcon, EditIcon } from "../../Components/Icons";
-
-
 
 export default function ProdutosList() {
   const [open, setOpen] = useState(false);
@@ -268,7 +267,9 @@ export default function ProdutosList() {
                           <TableCell align="left">{row.descricao}</TableCell>
                           <TableCell align="center">{row.ncm}</TableCell>
                           <TableCell>
-                            <Button onClick={() => handleClickOpen(row)}>
+                            <Button 
+                              variant="outlined"
+                              onClick={() => handleClickOpen(row)}>
                               <EditIcon />
                             </Button>
                           </TableCell>
@@ -340,20 +341,23 @@ export default function ProdutosList() {
                               )}
                             </DialogContent>
                             <DialogActions>
-                              <Button 
-                              onClick={handleClose}
-                              variant="outlined"
-                              color="error"
-                              >Cancelar</Button>
+                              <Button
+                                onClick={handleClose}
+                                variant="outlined"
+                                color="error"
+                              >
+                                Cancelar
+                              </Button>
                               <Button type="submit">Salvar</Button>
                             </DialogActions>
                           </Dialog>
 
                           <TableCell>
-                            <Button 
-                            variant="outlined"
-                            color="error"
-                            onClick={() => handleDelete(row.id)}>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleDelete(row.id)}
+                            >
                               <DeleteIcon />
                             </Button>
                           </TableCell>
@@ -389,9 +393,9 @@ export default function ProdutosList() {
           <HomeButton />
         </Box>
         <Box>
-          <Button variant="contained" component={Link} to="/produtos/form">
-            Adicionar novo produto
-          </Button>
+          <AddButton>
+            <Link to="/produtos/form">adicionar novo produto</Link>
+          </AddButton>
         </Box>
       </Grid>
     </Grid>

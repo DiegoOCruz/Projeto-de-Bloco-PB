@@ -1,14 +1,21 @@
-import { Grid, Box, TextField, Button, Typography, HomeButton } from "../../Components";
+import {
+  Grid,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  HomeButton,
+  AddButton,
+} from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword  } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Services/firebaseConfig";
 
 export default function Registro() {
-
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,22 +34,25 @@ export default function Registro() {
 
   function handleClick() {
     createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed up 
-    const user = userCredential.user;
-    if (user) {
-      alert(`Usuário ${user.email} cadastrado com sucesso!`);
-    }
-    navigate("/");
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    alert(`Erro ao cadastrar usuário: ${errorCode} - ${errorMessage}`);
-  });
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        if (user) {
+          alert(`Usuário ${user.email} cadastrado com sucesso!`);
+        }
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(`Erro ao cadastrar usuário: ${errorCode} - ${errorMessage}`);
+      });
   }
   return (
-    <Grid container={true} xs={12} sx={{
+    <Grid
+      container={true}
+      xs={12}
+      sx={{
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
@@ -51,7 +61,8 @@ export default function Registro() {
         "@media screen and (max-width: 600px)": {
           flexDirection: "column",
         },
-    }}>
+      }}
+    >
       <Grid
         item
         xs={12}
@@ -70,7 +81,7 @@ export default function Registro() {
           <Typography variant="h4">Cadastro de novos usuários</Typography>
         </Box>
         <Box sx={{ width: "80%", mb: 2 }}>
-          <TextField label="Nome" fullWidth/>
+          <TextField label="Nome" fullWidth />
         </Box>
         <Box sx={{ width: "80%", mb: 2 }}>
           <TextField label="Email" fullWidth={true} onChange={handleEmail} />
@@ -93,25 +104,24 @@ export default function Registro() {
           />
         </Box>
         <Grid
-        container
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: "10px",
-        }}
-      >
-        <Box>
-          <HomeButton />
-        </Box>
-        <Box>
-          <Button variant="contained" fullWidth onClick={handleClick}>
-              Adicionar usuário
-            </Button>
-        </Box>
-      </Grid>
+          container
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: "10px",
+          }}
+        >
+          <Box>
+            <HomeButton />
+          </Box>
+          <Box>
+            <AddButton onClick={handleClick}>
+              adicionar usuário
+            </AddButton>
+          </Box>
+        </Grid>
       </Grid>
     </Grid>
   );
 }
-
