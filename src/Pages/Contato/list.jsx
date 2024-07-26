@@ -23,6 +23,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  HomeButton,
 } from "../../Components";
 
 import { DeleteIcon, EditIcon } from "../../Components/Icons";
@@ -427,9 +428,7 @@ export default function ContatoList() {
         }}
       >
         <Box>
-          <Button variant="contained" component={Link} to="/">
-            Home
-          </Button>
+          <HomeButton />
         </Box>
         <Box>
           <Button variant="contained" component={Link} to="/contato/form">

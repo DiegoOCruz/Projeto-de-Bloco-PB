@@ -14,6 +14,7 @@ import {
   TableHead,
   TextField,
   Stack,
+  HomeButton,
 } from "../../Components";
 import {
   AddIcon,
@@ -273,16 +274,7 @@ export default function CotacoesList() {
       </Grid>
 
       <Box mt={4}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/"
-          sx={{ marginRight: "10px" }}
-          startIcon={<HomeIcon />}
-        >
-          Home
-        </Button>
+        <HomeButton />
         <Button
           variant="contained"
           color="secondary"

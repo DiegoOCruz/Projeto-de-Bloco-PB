@@ -1,4 +1,4 @@
-import { Grid, Box, TextField, Button, Typography } from "../../Components";
+import { Grid, Box, TextField, Button, Typography, HomeButton } from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
@@ -93,26 +93,25 @@ export default function Registro() {
           />
         </Box>
         <Grid
-          container={true}
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <Grid
-            item={true}
-            sx={{
-              width: "30%",
-            }}
-          >
-            <Button variant="contained" fullWidth onClick={handleClick}>
+        container
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          gap: "10px",
+        }}
+      >
+        <Box>
+          <HomeButton />
+        </Box>
+        <Box>
+          <Button variant="contained" fullWidth onClick={handleClick}>
               Adicionar usuário
             </Button>
-          </Grid>
-        </Grid>
+        </Box>
+      </Grid>
       </Grid>
     </Grid>
   );
 }
+

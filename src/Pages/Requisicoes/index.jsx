@@ -15,6 +15,7 @@ import {
   Paper,
   Checkbox,
   TextField,
+  HomeButton,
 } from "../../Components"; 
 import { getRequisicoes } from "./Requisicoes";
 import AprovadoIcon from "../../Components/Icons/Aprovado";
@@ -337,16 +338,7 @@ export default function Requisicoes() {
         }}
       >
         <Box>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/"
-          sx={{ marginRight: "10px" }}
-          startIcon={<HomeIcon />}
-        >
-          Home
-        </Button>
+        <HomeButton /> 
         </Box>
       </Grid>
     </Grid>

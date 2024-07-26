@@ -30,6 +30,8 @@ export {default as Stack } from './Stack';
 export {default as InputAdornment } from './InputAdornment';
 export {default as Alert } from './Alert';
 export {default as LogoAcme } from './LogoAcme';
+export {default as HomeButton } from './HomeButton';
+
 
 
 

@@ -21,6 +21,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  HomeButton,
 } from "../../Components";
 
 import { DeleteIcon, EditIcon } from "../../Components/Icons";
@@ -385,9 +386,7 @@ export default function ProdutosList() {
         }}
       >
         <Box>
-          <Button variant="contained" component={Link} to="/">
-            Home
-          </Button>
+          <HomeButton />
         </Box>
         <Box>
           <Button variant="contained" component={Link} to="/produtos/form">
