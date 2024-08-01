@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Grid, Box, Button, Typography } from "../../Components";
+import { Grid, Box, Button, Typography, AddButton, HomeButton } from "../../Components";
 import TextfieldComponent from "../../Components/TextField";
 import BuscaEndereco from "../../Infra/BuscaEndereco";
 import { useState } from "react";
@@ -109,7 +109,7 @@ export default function FornecedorForm() {
           },
         }}
       >
-        Cadastro Forncedores
+        Cadastro Fornecedores
       </Typography>
       <Grid
         item={true}
@@ -335,7 +335,7 @@ export default function FornecedorForm() {
                 justifyContent: "center",
               }}
             >
-              <Button variant="contained" onClick={handleCadastro}>Cadastrar</Button>
+              <AddButton onClick={handleCadastro}>adicionar fornecedor</AddButton>
             </Box>
           </Grid>
         </Grid>
@@ -351,12 +351,10 @@ export default function FornecedorForm() {
         }}
       >
         <Box>
-          <Button variant="contained" component={Link} to="/">
-            Home
-          </Button>
+          <HomeButton />
         </Box>
         <Box>
-          <Button variant="contained" component={Link} to="/fornecedores">
+          <Button variant="outlined" component={Link} to="/fornecedores">
             Voltar
           </Button>
         </Box>

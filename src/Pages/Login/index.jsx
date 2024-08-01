@@ -131,9 +131,10 @@ export default function Login({ setLogar, setAdmin }) {
               width: "30%",
             }}
           >
-            <Button variant="contained" fullWidth onClick={login}>
+            <Button variant="outlined" fullWidth onClick={login}>
               Entrar
             </Button>
+            
           </Grid>
         </Grid>
       </Grid>
