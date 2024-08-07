@@ -15,6 +15,8 @@ const ProdutoForm = lazy(() => import("./Pages/Produtos/form"));
 const ProdutoList = lazy(() => import("./Pages/Produtos/list"));
 const Registro = lazy(() => import("./Pages/Registro"));
 const Requisicoes = lazy(() => import("./Pages/Requisicoes"));
+const ForgotPassword = lazy(() => import("./Pages/ForgotPassword"));
+const FirstAccess = lazy(() => import("./Pages/FirstAccess"));
 
 function App() {
   const [logar, setLogar] = useState(""); //TODO mudar para vazio ""
@@ -23,13 +25,18 @@ function App() {
   return (
     <Router>
       <Suspense fallback={<Loading />}>
-        {logar === "" ? (
-          <Login setLogar={setLogar} setAdmin={setAdmin} />
-        ) : (
-          <>
-            <Navbar setLogar={setLogar} admin={admin} />
-            <Routes>
-              <Route path="/" element={<Home />} />
+        {logar && <Navbar setLogar={setLogar} admin={admin} />}
+        <Routes>
+          {/* Rotas acessíveis independentemente do estado de login */}
+          <Route path="/" element={<Login setLogar={setLogar} setAdmin={setAdmin} />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/first-access" element={<FirstAccess />} />
+          <Route path="/register" element={<Registro />} />
+
+          {/* Rotas protegidas: acessíveis apenas para usuários logados */}
+          {logar && (
+            <>
+              <Route path="/home" element={<Home />} />
               <Route path="/cotacoes" element={<CotacoesList />} />
               <Route path="/cotacoes/form" element={<CotacoesForm />} />
               <Route path="/fornecedores" element={<FornecedorList />} />
@@ -38,17 +45,9 @@ function App() {
               <Route path="/contato/form" element={<ContatoForm />} />
               <Route path="/produtos" element={<ProdutoList />} />
               <Route path="/produtos/form" element={<ProdutoForm />} />
-              <Route
-                path="*"
-                element={
-                  <Typography variant="h3" align="center">
-                    Not Found
-                  </Typography>
-                }
-              />
-              <Route path="/login" element={<Login setLogar={setLogar} />} />
-              <Route path="/register" element={<Registro />} />
-              {admin == true ? (
+
+              {/* Rota protegida: acessível apenas para administradores */}
+              {admin ? (
                 <Route path="/requisicoes" element={<Requisicoes />} />
               ) : (
                 <Route
@@ -60,9 +59,19 @@ function App() {
                   }
                 />
               )}
-            </Routes>
-          </>
-        )}
+            </>
+          )}
+
+          {/* Rota de fallback para páginas não encontradas */}
+          <Route
+            path="*"
+            element={
+              <Typography variant="h3" align="center">
+                Not Found
+              </Typography>
+            }
+          />
+        </Routes>
       </Suspense>
     </Router>
   );

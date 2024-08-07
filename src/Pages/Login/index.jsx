@@ -1,4 +1,11 @@
-import { Grid, Box, TextField, Button, Typography, Alert } from "../../Components";
+import {
+  Grid,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+} from "../../Components";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
@@ -7,11 +14,15 @@ import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Services/firebaseConfig";
 
+import { useNavigate } from "react-router-dom";
+
 export default function Login({ setLogar, setAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -22,11 +33,13 @@ export default function Login({ setLogar, setAdmin }) {
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
-  {/* 
+  {
+    /* 
   useEffect(() => {
     alert("Email: email@email.com\nSenha: 123456");
   },[]);
-*/}
+*/
+  }
   function login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -34,9 +47,10 @@ export default function Login({ setLogar, setAdmin }) {
         const user = userCredential.user;
         console.log(user);
         setLogar(user.email);
-        if(user.email){
+        if (user.email) {
           setAdmin(isAdmin(user.email));
         }
+        navigate("/home");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -49,7 +63,7 @@ export default function Login({ setLogar, setAdmin }) {
   function isAdmin(user) {
     //console.log(user.endsWith("@admin.com"));
     return user.endsWith("@admin.com");
-  };
+  }
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -89,8 +103,13 @@ export default function Login({ setLogar, setAdmin }) {
           },
         }}
       >
-        {error && 
-          <Alert severity="error">{error == "Firebase: Error (auth/invalid-email)." ? "ERRO! Usuário e/ou senha inválidos!" : error }</Alert>}
+        {error && (
+          <Alert severity="error">
+            {error == "Firebase: Error (auth/invalid-email)."
+              ? "ERRO! Usuário e/ou senha inválidos!"
+              : error}
+          </Alert>
+        )}
 
         <Box mb={2}>
           <Typography variant="h4">Login</Typography>
@@ -116,6 +135,17 @@ export default function Login({ setLogar, setAdmin }) {
             onKeyDown={handleKeyDown}
           />
         </Box>
+        <Typography>
+          <Link
+            to="/forgot-password"
+            style={{
+              textDecoration: "none",
+              color: "blue",
+              cursor: "pointer",
+            }}
+          >
+            Esqueci minha senha</Link>
+        </Typography>
         <Grid
           container={true}
           sx={{
@@ -123,6 +153,7 @@ export default function Login({ setLogar, setAdmin }) {
             flexDirection: "row",
             justifyContent: "center",
             width: "100%",
+            gap: 2,
           }}
         >
           <Grid
@@ -134,7 +165,21 @@ export default function Login({ setLogar, setAdmin }) {
             <Button variant="outlined" fullWidth onClick={login}>
               Entrar
             </Button>
-            
+          </Grid>
+          <Grid
+            item={true}
+            sx={{
+              width: "30%",
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              onClick={() => navigate("/first-access")}
+            >
+              Primeiro acesso? Clique aqui!
+            </Button>
           </Grid>
         </Grid>
       </Grid>
