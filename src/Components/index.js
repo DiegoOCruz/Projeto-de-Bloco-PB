@@ -32,6 +32,8 @@ export {default as Alert } from './Alert';
 export {default as LogoAcme } from './LogoAcme';
 export {default as HomeButton } from './HomeButton';
 export {default as AddButton } from './AddButton';
+export {default as HeaderSecundario } from './HeaderSecundario';
+
 
 
 

@@ -135,7 +135,11 @@ export default function Login({ setLogar, setAdmin }) {
             onKeyDown={handleKeyDown}
           />
         </Box>
-        <Typography>
+        <Typography
+          sx={{
+            marginBottom: "10px",
+          }}
+        >
           <Link
             to="/forgot-password"
             style={{
